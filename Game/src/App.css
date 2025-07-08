@@ -1,8 +1,11 @@
 #root {
-  max-width: 1280px;
-  margin: 0 auto;
-  padding: 2rem;
+  width: 100%;
+  height: 100%;
+  margin: 0;
   text-align: center;
+  display: flex;
+  justify-content: center;
+  align-items: stretch;
 }
 
 .logo {
@@ -39,4 +42,84 @@
 
 .read-the-docs {
   color: #888;
+}
+
+/* PREVIOUS */
+
+.homepage {
+    flex: 1;
+    min-width: 100%;
+    min-height: 100%;
+    padding: 3rem;
+    display: flex;
+    justify-content: center;
+}
+
+.gameboard {
+    flex: 2;
+    border: 1px solid lightblue;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+.playgrid {
+    aspect-ratio: 1;
+    max-height: 100%;
+    border: 1px solid red;
+    border-radius: 10px;
+    margin: 0 auto;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    align-content: space-between;
+    gap: 2%;
+}
+
+.playgrid-element {
+    flex: 1;
+    aspect-ratio: 1;
+    align-content: center;
+    border: 1px solid lightgray;
+    border-radius: 10px;
+    min-width: 13%;
+    max-width: 13%;
+}
+
+.clickable {
+    cursor: pointer;
+}
+
+.clickable:hover {
+    border-color: blue;
+    background-color: rgb(88, 88, 88);
+}
+
+.menu {
+    flex: 1;
+    border: 1px solid lightblue;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.playmenu {
+    flex: 1;
+    border: 1px solid red;
+    border-radius: 10px;
+    padding: 1rem;
+    display: flex;
+    flex-direction: column;
+    justify-content: start;
+}
+
+.game-description {
+    flex: 1;
+
+}
+
+.game-description>p {
+    height: 100%;
+    align-content: center;
 }

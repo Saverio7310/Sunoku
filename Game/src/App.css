@@ -1,47 +1,50 @@
 #root {
-  width: 100%;
-  height: 100%;
-  margin: 0;
-  text-align: center;
-  display: flex;
-  justify-content: center;
-  align-items: stretch;
+    width: 100%;
+    height: 100%;
+    margin: 0;
+    text-align: center;
+    display: flex;
+    justify-content: center;
+    align-items: stretch;
 }
 
 .logo {
-  height: 6em;
-  padding: 1.5em;
-  will-change: filter;
-  transition: filter 300ms;
+    height: 6em;
+    padding: 1.5em;
+    will-change: filter;
+    transition: filter 300ms;
 }
+
 .logo:hover {
-  filter: drop-shadow(0 0 2em #646cffaa);
+    filter: drop-shadow(0 0 2em #646cffaa);
 }
+
 .logo.react:hover {
-  filter: drop-shadow(0 0 2em #61dafbaa);
+    filter: drop-shadow(0 0 2em #61dafbaa);
 }
 
 @keyframes logo-spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
+    from {
+        transform: rotate(0deg);
+    }
+
+    to {
+        transform: rotate(360deg);
+    }
 }
 
 @media (prefers-reduced-motion: no-preference) {
-  a:nth-of-type(2) .logo {
-    animation: logo-spin infinite 20s linear;
-  }
+    a:nth-of-type(2) .logo {
+        animation: logo-spin infinite 20s linear;
+    }
 }
 
 .card {
-  padding: 2em;
+    padding: 2em;
 }
 
 .read-the-docs {
-  color: #888;
+    color: #888;
 }
 
 /* PREVIOUS */
@@ -64,17 +67,70 @@
     align-items: center;
 }
 
+.gameboard.hidden {
+    display: none;
+}
+
+.gameboard.visible {
+    display: flex;
+}
+
+.gameboard.entering {
+    animation: slideInFromLeft 0.7s ease-out forwards;
+}
+
+.gameboard.exiting {
+    animation: slideOutFromRight 0.7s ease-out forwards;
+}
+
+@keyframes slideInFromLeft {
+    0% {
+        transform: translateX(-100%);
+        /* Start completely off-screen to the left */
+        opacity: 0;
+        /* Start invisible */
+    }
+
+    100% {
+        transform: translateX(0);
+        /* End at its original position */
+        opacity: 1;
+        /* End fully visible */
+    }
+}
+
+@keyframes slideOutFromRight {
+    0% {
+        transform: translateX(0);
+        /* End at its original position */
+        opacity: 1;
+        /* End fully visible */
+    }
+
+    100% {
+        transform: translateX(-100%);
+        /* Start completely off-screen to the left */
+        opacity: 0;
+        /* Start invisible */
+    }
+}
+
 .playgrid {
     aspect-ratio: 1;
     max-height: 100%;
     border: 1px solid red;
     border-radius: 10px;
+    padding: 1rem;
     margin: 0 auto;
     display: flex;
     flex-wrap: wrap;
     justify-content: space-between;
     align-content: space-between;
     gap: 2%;
+}
+
+.playgrid.inactive {
+    pointer-events: none;
 }
 
 .playgrid-element {
@@ -93,7 +149,7 @@
 
 .clickable:hover {
     border-color: blue;
-    background-color: rgb(88, 88, 88);
+    background-color: #585858;
 }
 
 .menu {
@@ -107,6 +163,7 @@
 .playmenu {
     flex: 1;
     border: 1px solid red;
+    padding: 1rem;
     border-radius: 10px;
     padding: 1rem;
     display: flex;
@@ -114,12 +171,80 @@
     justify-content: start;
 }
 
-.game-description {
-    flex: 1;
-
+.record-score {
+    margin: 1rem 0;
 }
 
-.game-description>p {
+.tab-holder {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+}
+
+.tab-container {
+    border: 1px solid lightgray;
+    border-radius: 10px 10px 0px 0px;
+}
+
+.tabs {
+    list-style: none;
+    display: flex;
+    overflow: scroll;
+    scrollbar-width: none;
+}
+
+.tab {
+    padding: 10px;
+    border-radius: 9px;
+    cursor: pointer;
+}
+
+.tab.active {
+    background-color: #a09898;
+}
+
+.tab:hover {
+    background-color: #585858;
+}
+
+.tab-content {
+    flex: 1;
+}
+
+.tab-pane {
     height: 100%;
+    display: none;
+    border: 1px solid lightgray;
+    border-top-width: 0px;
+    border-radius: 0px 0px 10px 10px;
+}
+
+.tab-pane>h3 {
+    padding: 0.5rem 1rem;
+    text-align: left;
+}
+
+.warning {
+    color: #b5b520;
+}
+
+.error {
+    color: #850f0f;
+}
+
+.tab-pane.active {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.game-description {
+    height: 100%;
+    padding: 1rem;
     align-content: center;
+    text-align: left;
+}
+
+.button-container {
+    margin-top: 1rem;
 }

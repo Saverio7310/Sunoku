@@ -13,23 +13,23 @@ export class Board {
         { difficulty: 'hard', ZERO: 10, THREE: 6, TWO: 2 },
     ];
 
-    constructor() {   
+    constructor() {
     }
 
     createFlatInitialNumericList(currentLevelData: LevelData): number[] {
         const elements: number[] = [];
         for (let i = 0; i < Board.BOARD_SIZE; i++) {
             if (currentLevelData.ZERO > 0) {
-                elements[i] = 0;
+                elements.push(0);
                 currentLevelData.ZERO--;
             } else if (currentLevelData.TWO > 0) {
-                elements[i] = 2;
+                elements.push(2);
                 currentLevelData.TWO--;
             } else if (currentLevelData.THREE > 0) {
-                elements[i] = 3;
+                elements.push(3);
                 currentLevelData.THREE--;
             } else {
-                elements[i] = 1;
+                elements.push(1);
             }
         }
         return elements;
@@ -47,79 +47,74 @@ export class Board {
         let i: number;
         let j: number;
 
-        for (i = 0; i <= Board.BOARD_ROWS; i++) {
+        /**
+         * This is a matrix of array to keep track of every zero and the sum of the value contained for
+         * each row and column. The outer array contains two subarrays, the first keeps track of the
+         * counters for the rows, the second for the columns. Both contains `Board.BOARD_ROWS` subarrays,
+         * each one containing the number of zeros in the first place, and the total sum in the second
+         */
+        const counterZerosNumbers: number[][][] = Array(2).fill(null).map(() => {
+            return Array(Board.BOARD_ROWS).fill(null).map(() => {
+                return Array(2).fill(0);
+            });
+        });
+
+        let cell: Cell;
+
+        for (i = 0; i < Board.BOARD_ROWS; i++) {
             matrix.push([]);
-
-            if (i === Board.BOARD_ROWS) break;
-
-            let zeroInCurrentRow: number = 0
-            let nonZeroInCurrentRow: number = 0
-
-            for (j = 0; j <= Board.BOARD_COLS; j++) {
-                const currentValue = list[j + i * Board.BOARD_COLS];
-
-                if (currentValue === 0) zeroInCurrentRow++;
-                else nonZeroInCurrentRow++;
-
-                let cell: Cell;
-
-                if (j === Board.BOARD_COLS) {
-                    cell = {
-                        type: "counter",
-                        bomb_value: zeroInCurrentRow,
-                        count_value: nonZeroInCurrentRow
-                    };
-                    
-                } else {
-                    cell = {
-                        type: "card",
-                        value: currentValue,
-                        isPlayed: false
-                    };
-                }
-
+            for (j = 0; j < Board.BOARD_COLS; j++) {
+                const listValue: number = list[j + i*Board.BOARD_COLS];
+                cell = {
+                    type: "card",
+                    isPlayed: false,
+                    value: listValue
+                };
                 matrix[i].push(cell);
-            }
-        }
-
-        for (i = 0; i < Board.BOARD_COLS; i++) {
-            let zeroInCurrentCol: number = 0
-            let nonZeroInCurrentCol: number = 0
-            for (j = 0; j <= Board.BOARD_ROWS; j++) {
-                if (j === Board.BOARD_ROWS) {
-                    const counter: Cell = {
-                        type: "counter",
-                        bomb_value: zeroInCurrentCol,
-                        count_value: nonZeroInCurrentCol,
-                    }
-
-                    matrix[j].push(counter);
-                } else {
-                    const cell: Cell = matrix[j][i];
-                    if (cell.type === 'card' && cell.value === 0) zeroInCurrentCol++;
-                    else if (cell.type === 'card' && cell.value !== 0) nonZeroInCurrentCol++;
+                if (listValue === 0) {
+                    counterZerosNumbers[0][i][0]+=1;
+                    counterZerosNumbers[1][j][0]+=1;
+                }
+                else {
+                    counterZerosNumbers[0][i][1]+=listValue;
+                    counterZerosNumbers[1][j][1]+=listValue;
                 }
             }
         }
 
-        matrix[Board.BOARD_ROWS ][Board.BOARD_COLS ] = {
-            type: 'counter',
-            bomb_value: 0,
-            count_value: 0
+        for (i = 0; i < Board.BOARD_ROWS; i++) {
+            cell = {
+                type: "counter",
+                bomb_value: counterZerosNumbers[0][i][0],
+                count_value: counterZerosNumbers[0][i][1]
+            };
+            matrix[i].push(cell);
         }
+
+        counterZerosNumbers[1].push([0,0]);
+        
+        
+        const countersList: Cell[] = counterZerosNumbers[1].map(el => {
+            return cell = {
+                type: "counter",
+                bomb_value: el[0],
+                count_value: el[1]
+            };
+        });
+        matrix.push(countersList);
 
         return matrix;
     }
 
-    generateBoard(level: number): Cell[][] {
+    generateBoard(level: number): [LevelData, Cell[][]] {
         level = Math.min(level, Board.levelsData.length - 1)
         const currentLevelData: LevelData = { ...Board.levelsData[level] };
 
         const elements: number[] = this.createFlatInitialNumericList(currentLevelData);
-
+        
         this.shuffleNumericList(elements);
-
+        
         const matrix: Cell[][] = this.createCellMatrixFromNumericList(elements);
-        return matrix;
+        return [{ ...Board.levelsData[level] }, matrix];
     }
 }

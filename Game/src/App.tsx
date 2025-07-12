@@ -68,31 +68,30 @@ function App() {
     const rows: number = Board.BOARD_ROWS;
     const cols: number = Board.BOARD_COLS;
 
-    const updateBoardWithNewCell = (board: Cell[][], rowIndex: number, colIndex: number): Cell[][] => {
-        const newBoard: Cell[][] = [];
-        board.forEach((row: Cell[], index: number) => {
-            if (index === rowIndex) {
-                const newRow: Cell[] = [];
-                row.forEach((cell: Cell, index: number) => {
-                    if (index === colIndex && cell.type === 'card') {
-                        const newCell: Cell = {
-                            type: cell.type,
-                            value: cell.value,
-                            isPlayed: true
-                        };
-                        newRow.push(newCell);
-                    } else {
-                        newRow.push(cell);
-                    }
-                });
-                newBoard[index] = newRow;
-            } else {
-                newBoard[index] = row;
+    /**
+     * Flip the Card at the specified `rowIndex` and `colIndex` by setting its `isPlayed` property to true
+     * @param board 
+     * @param rowIndex 
+     * @param colIndex 
+     * @returns 
+     */
+    const updateBoardWithFlippedCell = (board: Cell[][], rowIndex: number, colIndex: number): Cell[][] => {
+        const newBoard: Cell[][] = Array(board.length).fill(null).map(() => []);
+        for (let i = 0; i < board.length; i++) {
+            for (let j = 0; j < board[0].length; j++) {
+                const cell: Cell = board[i][j];
+                if (cell.type === 'card' && cell.isPlayed === false && i === rowIndex && j === colIndex) cell.isPlayed = true;
+                newBoard[i][j] = cell;
             }
-        });
+        }
         return newBoard;
     }
 
+    /**
+     * Update current LevelData with the just cilicked Cell's value
+     * @param valueSelected 
+     * @returns 
+     */
     const updateLevelData = (valueSelected: number): LevelData => {
         const newLevelinfo: LevelData = { ...levelInfo };
         switch (valueSelected) {
@@ -113,20 +112,27 @@ function App() {
         return newLevelinfo;
     }
 
-    const revealCompleteBoard = () => {
+    /**
+     * Reveal the entire board
+     * @returns 
+     */
+    const revealCompleteBoard = (): Cell[][] => {
         const revealedBoard: Cell[][] = Array(board.length).fill(null).map(() => []);
         for (let i = 0; i < board.length; i++) {
             for (let j = 0; j < board[0].length; j++) {
                 const cell: Cell = board[i][j];
-                console.log("Cell to use:", cell);
                 if (cell.type === 'card' && cell.isPlayed === false) cell.isPlayed = true;
                 revealedBoard[i][j] = cell;
             }
         }
-        console.log("Revealed board:\n", revealedBoard);
         return revealedBoard;
     }
 
+    /**
+     * Handle the click of a Card
+     * @param index
+     * @returns 
+     */
     const handleCardClick = (index: number): void => {
         if (gameState !== 'playing') {
             setMessage({ type: 'warning', text: 'Start the game before or wait till the level is loaded!' });
@@ -142,13 +148,13 @@ function App() {
             setMessage({ type: 'warning', text: 'Card already pressed!' });
             return;
         }
-        
+
         if (el.value === 0) {
             setMessage({ type: 'error', text: 'You lost!' });
-            setLevelScore(0)
-            setGameState('game-over')
+            setLevelScore(0);
+            setGameState('game-over');
             const newBoard: Cell[][] = revealCompleteBoard();
-            setBoard(newBoard)
+            setBoard(newBoard);
             return;
         }
 
@@ -159,25 +165,33 @@ function App() {
         })
         const newLevelinfo: LevelData = updateLevelData(el.value);
         setLevelInfo(newLevelinfo);
-        
+
+        const newBoard: Cell[][] = updateBoardWithFlippedCell(board, row, col);
+        setBoard(newBoard);
+
         if (newLevelinfo.TWO === 0 && newLevelinfo.THREE === 0) {
             setMessage({ type: 'success', text: 'You found every 2 and 3, YOU WON!' })
             setTimeout(() => {
                 const newBoard: Cell[][] = revealCompleteBoard();
-                setBoard(newBoard)
+                setBoard(newBoard);
+                setGameScore(previous => previous + (levelScore * el.value));
+                setLevelScore(0);
             }, 500);
-            return;
         }
-
-        const newBoard: Cell[][] = updateBoardWithNewCell(board, row, col);
-        setBoard(newBoard);
-        
     }
 
+    /**
+     * Changes the currently visible tab of the menu
+     * @param index 
+     */
     const handleTabClick = (index: number): void => {
         setActiveTabIndex(index)
     }
 
+    /**
+     * Make the game start
+     * @param level 
+     */
     const handleStartGame = (level: number): void => {
         console.log('Starting with level:', level);
         setLevelScore(0);
@@ -209,6 +223,12 @@ function App() {
         return check;
     }
 
+    /**
+     * Return the correct css class name for the Counter at the specified `row` and `col`
+     * @param row 
+     * @param col 
+     * @returns 
+     */
     const getCounterCardBackgroundColor = (row: number, col: number): string => {
         let value: number = 0;
         if (col === Board.BOARD_COLS) value = row;

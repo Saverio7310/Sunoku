@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import './App.css'
-import { type Cell, type GameState, type Message } from './types/gameTypes';
+import { type LevelData, type Cell, type GameState, type Message } from './types/gameTypes';
 import { Board } from './model/Board';
 
 function App() {
@@ -55,6 +55,7 @@ function App() {
             { type: 'counter', bomb_value: 0, count_value: 0 },
         ]
     ]);
+    const [levelInfo, setLevelInfo] = useState<LevelData>({ difficulty: 'easy', ZERO: 0, TWO: 0, THREE: 0 });
     const [levelScore, setLevelScore] = useState<number>(0);
     const [gameScore, setGameScore] = useState<number>(0);
     const [recordScore, setRecordScore] = useState<number>(0);
@@ -64,8 +65,8 @@ function App() {
 
     console.log('Rendering App!');
 
-    const rows: number = board.length;
-    const cols: number = board[0].length;
+    const rows: number = Board.BOARD_ROWS;
+    const cols: number = Board.BOARD_COLS;
 
     const updateBoardWithNewCell = (board: Cell[][], rowIndex: number, colIndex: number): Cell[][] => {
         const newBoard: Cell[][] = [];
@@ -92,32 +93,85 @@ function App() {
         return newBoard;
     }
 
+    const updateLevelData = (valueSelected: number): LevelData => {
+        const newLevelinfo: LevelData = { ...levelInfo };
+        switch (valueSelected) {
+            case 0:
+                break;
+            case 1:
+                break;
+            case 2:
+                newLevelinfo.TWO -= 1
+                break;
+            case 3:
+                newLevelinfo.THREE -= 1
+                break;
+            default:
+                console.warn('Unrecognised value')
+                break;
+        }
+        return newLevelinfo;
+    }
+
+    const revealCompleteBoard = () => {
+        const revealedBoard: Cell[][] = Array(board.length).fill(null).map(() => []);
+        for (let i = 0; i < board.length; i++) {
+            for (let j = 0; j < board[0].length; j++) {
+                const cell: Cell = board[i][j];
+                console.log("Cell to use:", cell);
+                if (cell.type === 'card' && cell.isPlayed === false) cell.isPlayed = true;
+                revealedBoard[i][j] = cell;
+            }
+        }
+        console.log("Revealed board:\n", revealedBoard);
+        return revealedBoard;
+    }
+
     const handleCardClick = (index: number): void => {
         if (gameState !== 'playing') {
             setMessage({ type: 'warning', text: 'Start the game before or wait till the level is loaded!' });
             return;
         }
+
         const row: number = Math.floor(index / cols);
         const col: number = index % cols;
         const el: Cell = board[row][col];
-        if (el.type === 'card' && !el.isPlayed) {
-            console.log(el);
-            if (el.value === 0) {
-                setMessage({ type: 'error', text: 'You lost!' });
-                setLevelScore(0)
-                setGameState('game-over')
-            } else {
-                setMessage({ type: 'log', text: `You found a ${el.value}` })
-                setLevelScore(previous => {
-                    if (previous === 0) return el.value;
-                    return previous * el.value;
-                })
-            }
-            const newBoard: Cell[][] = updateBoardWithNewCell(board, row, col);
-            setBoard(newBoard);
-        } else {
+
+        if (el.type !== 'card') return;
+        if (el.type === 'card' && el.isPlayed === true) {
             setMessage({ type: 'warning', text: 'Card already pressed!' });
+            return;
         }
+        
+        if (el.value === 0) {
+            setMessage({ type: 'error', text: 'You lost!' });
+            setLevelScore(0)
+            setGameState('game-over')
+            const newBoard: Cell[][] = revealCompleteBoard();
+            setBoard(newBoard)
+            return;
+        }
+
+        setMessage({ type: 'log', text: `You found a ${el.value}` })
+        setLevelScore(previous => {
+            if (previous === 0) return el.value;
+            return previous * el.value;
+        })
+        const newLevelinfo: LevelData = updateLevelData(el.value);
+        setLevelInfo(newLevelinfo);
+        
+        if (newLevelinfo.TWO === 0 && newLevelinfo.THREE === 0) {
+            setMessage({ type: 'success', text: 'You found every 2 and 3, YOU WON!' })
+            setTimeout(() => {
+                const newBoard: Cell[][] = revealCompleteBoard();
+                setBoard(newBoard)
+            }, 500);
+            return;
+        }
+
+        const newBoard: Cell[][] = updateBoardWithNewCell(board, row, col);
+        setBoard(newBoard);
+        
     }
 
     const handleTabClick = (index: number): void => {
@@ -126,16 +180,19 @@ function App() {
 
     const handleStartGame = (level: number): void => {
         console.log('Starting with level:', level);
-
+        setLevelScore(0);
         setGameState('starting');
         setMessage({ type: 'log', text: 'Starting Game!' });
 
         console.log('Matrix creation');
         const boardShuffler = new Board();
-        const matrix = boardShuffler.generateBoard(level);
-        setBoard(matrix);
-        setGameState('playing');
-        setMessage({ type: 'log', text: 'Game has started. Choose your first cell!' });
+        const [levelData, matrix] = boardShuffler.generateBoard(level);
+        setTimeout(() => {
+            setLevelInfo(levelData);
+            setBoard(matrix);
+            setGameState('playing');
+            setMessage({ type: 'log', text: 'Game has started. Choose your first cell!' });
+        }, 600);
     }
 
     /**
@@ -152,10 +209,26 @@ function App() {
         return check;
     }
 
-    /**
-     * For the animation: <div className={`gameboard ${gameState === 'idle' ? 'hidden' : ''} ${gameState === 'starting' ? 'entering' : ''} ${gameState === 'level-advancing' ? 'exiting' : ''}`}>
-     */
-    
+    const getCounterCardBackgroundColor = (row: number, col: number): string => {
+        let value: number = 0;
+        if (col === Board.BOARD_COLS) value = row;
+        else value = col;
+        switch (value) {
+            case 0:
+                return 'red'
+            case 1:
+                return 'green'
+            case 2:
+                return 'yellow'
+            case 3:
+                return 'blue'
+            case 4:
+                return 'purple'
+            default:
+                return '';
+        }
+    }
+
     return (
         <div className='homepage'>
             <div className='gameboard'>
@@ -165,11 +238,11 @@ function App() {
                             switch (el.type) {
                                 case 'card':
                                     return (
-                                        <div key={j + i * cols} className={`playgrid-element ${el.isPlayed ? '' : 'clickable'}`} onClick={() => handleCardClick(j + i * cols)}>
+                                        <div key={j + i * cols} className={`playgrid-element ${el.isPlayed ? 'clicked' : 'clickable'}`} onClick={() => handleCardClick(j + i * cols)}>
                                             {el.isPlayed ? el.value : '?'}
                                         </div>);
                                 case 'counter':
-                                    return (<div key={j + i * cols} className='playgrid-element'>{`${el.bomb_value}, ${el.count_value}`}</div>);
+                                    return (<div key={j + i * cols} className={`playgrid-element ${getCounterCardBackgroundColor(i, j)}`}>{`${el.bomb_value}, ${el.count_value}`}</div>);
                                 default:
                                     return (<div key={j + i * cols} className='playgrid-element'>{j + i * cols}</div>);
                             }

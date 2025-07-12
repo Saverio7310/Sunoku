@@ -15,7 +15,7 @@ export type Counter = {
 export type Cell = Card | Counter;
 
 export type Message = {
-    type: 'log' | 'warning' | 'error',
+    type: 'log' | 'warning' | 'error' | 'success',
     text: string
 };
 

@@ -1,7 +1,8 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import './App.css'
-import { type LevelData, type Cell, type GameState, type Message } from './types/gameTypes';
+import { type LevelData, type Cell, type GameState, type Message, type RecordScore } from './types/gameTypes';
 import { Board } from './model/Board';
+import { retrieveRecordScore, saveRecordScore } from './utils/localStorage';
 
 function App() {
     const [gameState, setGameState] = useState<GameState>('idle');
@@ -63,9 +64,18 @@ function App() {
     const [activeTabIndex, setActiveTabIndex] = useState<number>(0);
     const [message, setMessage] = useState<Message>({ type: 'warning', text: 'Press Start!' });
 
+    /**
+     * Check if this is correct []
+     */
+    useEffect(() => {
+        console.log('Effect starting');
+        const record: RecordScore = retrieveRecordScore();
+        if (record.date === '' || record.value > 0) setRecordScore(record.value);
+    }, []);
+
     console.log('Rendering App!');
 
-    const rows: number = Board.BOARD_ROWS;
+    /* const rows: number = Board.BOARD_ROWS; */
     const cols: number = Board.BOARD_COLS;
 
     /**
@@ -152,6 +162,11 @@ function App() {
         if (el.value === 0) {
             setMessage({ type: 'error', text: 'You lost!' });
             setLevelScore(0);
+            //setGameScore(0)?
+
+            if (levelScore === 0) setLevel(0);
+            else setLevel(previous => Math.max(0, previous - 1));
+
             setGameState('game-over');
             const newBoard: Cell[][] = revealCompleteBoard();
             setBoard(newBoard);
@@ -170,12 +185,20 @@ function App() {
         setBoard(newBoard);
 
         if (newLevelinfo.TWO === 0 && newLevelinfo.THREE === 0) {
-            setMessage({ type: 'success', text: 'You found every 2 and 3, YOU WON!' })
+            setMessage({ type: 'success', text: 'You found every 2 and 3, YOU WON! Click Start for the next level' })
             setTimeout(() => {
                 const newBoard: Cell[][] = revealCompleteBoard();
                 setBoard(newBoard);
-                setGameScore(previous => previous + (levelScore * el.value));
+                const totalLevelScore: number = gameScore + (levelScore * el.value);
+                setGameScore(totalLevelScore);
                 setLevelScore(0);
+
+                if (totalLevelScore > recordScore) {
+                    setRecordScore(totalLevelScore);
+                    saveRecordScore(totalLevelScore);
+                }
+
+                setLevel(previous => previous + 1)
             }, 500);
         }
     }

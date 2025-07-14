@@ -27,3 +27,8 @@ export type LevelData = {
     TWO: number,
     THREE: number,
 }
+
+export type RecordScore = {
+    value: number,
+    date: string
+}

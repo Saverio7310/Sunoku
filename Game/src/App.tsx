@@ -1,50 +1,51 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import './App.css'
-import { type LevelData, type Cell, type GameState, type Message, type RecordScore } from './types/gameTypes';
+import { type LevelData, type Cell, type GameState, type Message, type RecordScore, type Position } from './types/gameTypes';
 import { Board } from './model/Board';
 import { retrieveRecordScore, saveRecordScore } from './utils/localStorage';
+import CandidatesContextMenu from './components/CandidatesContextMenu';
 
 function App() {
     const [gameState, setGameState] = useState<GameState>('idle');
     const [board, setBoard] = useState<Cell[][]>([
         [
-            { type: 'card', value: 0, isPlayed: false },
-            { type: 'card', value: 1, isPlayed: false },
-            { type: 'card', value: 1, isPlayed: false },
-            { type: 'card', value: 2, isPlayed: false },
-            { type: 'card', value: 3, isPlayed: false },
+            { type: 'card', value: 0, isPlayed: false, areCandidatesVisible: [false, false, false, false] },
+            { type: 'card', value: 1, isPlayed: false, areCandidatesVisible: [false, false, false, false] },
+            { type: 'card', value: 1, isPlayed: false, areCandidatesVisible: [false, false, false, false] },
+            { type: 'card', value: 2, isPlayed: false, areCandidatesVisible: [false, false, false, false] },
+            { type: 'card', value: 3, isPlayed: false, areCandidatesVisible: [false, false, false, false] },
             { type: 'counter', bomb_value: 9, count_value: 9 }
         ],
         [
-            { type: 'card', value: 2, isPlayed: false },
-            { type: 'card', value: 0, isPlayed: false },
-            { type: 'card', value: 0, isPlayed: false },
-            { type: 'card', value: 1, isPlayed: false },
-            { type: 'card', value: 1, isPlayed: false },
+            { type: 'card', value: 2, isPlayed: false, areCandidatesVisible: [false, false, false, false] },
+            { type: 'card', value: 0, isPlayed: false, areCandidatesVisible: [false, false, false, false] },
+            { type: 'card', value: 0, isPlayed: false, areCandidatesVisible: [false, false, false, false] },
+            { type: 'card', value: 1, isPlayed: false, areCandidatesVisible: [false, false, false, false] },
+            { type: 'card', value: 1, isPlayed: false, areCandidatesVisible: [false, false, false, false] },
             { type: 'counter', bomb_value: 9, count_value: 9 }
         ],
         [
-            { type: 'card', value: 1, isPlayed: false },
-            { type: 'card', value: 1, isPlayed: false },
-            { type: 'card', value: 1, isPlayed: false },
-            { type: 'card', value: 1, isPlayed: false },
-            { type: 'card', value: 1, isPlayed: false },
+            { type: 'card', value: 1, isPlayed: false, areCandidatesVisible: [false, false, false, false] },
+            { type: 'card', value: 1, isPlayed: false, areCandidatesVisible: [false, false, false, false] },
+            { type: 'card', value: 1, isPlayed: false, areCandidatesVisible: [false, false, false, false] },
+            { type: 'card', value: 1, isPlayed: false, areCandidatesVisible: [false, false, false, false] },
+            { type: 'card', value: 1, isPlayed: false, areCandidatesVisible: [false, false, false, false] },
             { type: 'counter', bomb_value: 9, count_value: 9 }
         ],
         [
-            { type: 'card', value: 1, isPlayed: false },
-            { type: 'card', value: 0, isPlayed: false },
-            { type: 'card', value: 3, isPlayed: false },
-            { type: 'card', value: 2, isPlayed: false },
-            { type: 'card', value: 0, isPlayed: false },
+            { type: 'card', value: 1, isPlayed: false, areCandidatesVisible: [false, false, false, false] },
+            { type: 'card', value: 0, isPlayed: false, areCandidatesVisible: [false, false, false, false] },
+            { type: 'card', value: 3, isPlayed: false, areCandidatesVisible: [false, false, false, false] },
+            { type: 'card', value: 2, isPlayed: false, areCandidatesVisible: [false, false, false, false] },
+            { type: 'card', value: 0, isPlayed: false, areCandidatesVisible: [false, false, false, false] },
             { type: 'counter', bomb_value: 9, count_value: 9 }
         ],
         [
-            { type: 'card', value: 3, isPlayed: false },
-            { type: 'card', value: 1, isPlayed: false },
-            { type: 'card', value: 1, isPlayed: false },
-            { type: 'card', value: 1, isPlayed: false },
-            { type: 'card', value: 1, isPlayed: false },
+            { type: 'card', value: 3, isPlayed: false, areCandidatesVisible: [false, false, false, false] },
+            { type: 'card', value: 1, isPlayed: false, areCandidatesVisible: [false, false, false, false] },
+            { type: 'card', value: 1, isPlayed: false, areCandidatesVisible: [false, false, false, false] },
+            { type: 'card', value: 1, isPlayed: false, areCandidatesVisible: [false, false, false, false] },
+            { type: 'card', value: 1, isPlayed: false, areCandidatesVisible: [false, false, false, false] },
             { type: 'counter', bomb_value: 9, count_value: 9 }
         ],
         [
@@ -63,6 +64,9 @@ function App() {
     const [level, setLevel] = useState<number>(0);
     const [activeTabIndex, setActiveTabIndex] = useState<number>(0);
     const [message, setMessage] = useState<Message>({ type: 'warning', text: 'Press Start!' });
+    const [isContextMenuVisible, setIsContextMenuVisible] = useState<boolean>(false);
+    const [contextMenuPosition, setContextMenuPosition] = useState<Position>({ x: 0, y: 0, row: 0, column: 0 });
+    const contectMenuRef = useRef<HTMLDivElement>(null);
 
     /**
      * Check if this is correct []
@@ -71,6 +75,22 @@ function App() {
         console.log('Effect starting');
         const record: RecordScore = retrieveRecordScore();
         if (record.date === '' || record.value > 0) setRecordScore(record.value);
+    }, []);
+
+    /**
+     * Closes the context menu if you click away from it
+     */
+    useEffect(() => {
+        const handleMouseClick = (event: MouseEvent): void => {
+            if (contectMenuRef && !contectMenuRef.current?.contains(event.target as Node)) {
+                setIsContextMenuVisible(false);
+            }
+        }
+
+        document.addEventListener('mousedown', handleMouseClick);
+        return () => {
+            document.removeEventListener('mousedown', handleMouseClick);
+        }
     }, []);
 
     console.log('Rendering App!');
@@ -90,7 +110,34 @@ function App() {
         for (let i = 0; i < board.length; i++) {
             for (let j = 0; j < board[0].length; j++) {
                 const cell: Cell = board[i][j];
-                if (cell.type === 'card' && cell.isPlayed === false && i === rowIndex && j === colIndex) cell.isPlayed = true;
+                if (cell.type === 'card' && cell.isPlayed === false && i === rowIndex && j === colIndex) {
+                    cell.isPlayed = true;
+                    cell.areCandidatesVisible = Array(4).fill(null).map(() => false);
+                }
+                newBoard[i][j] = cell;
+            }
+        }
+        return newBoard;
+    }
+
+    /**
+     * Show the Candidate (0, 1, 2, 3) for the Card at the specified `rowIndex` and `colIndex`
+     * @param board 
+     * @param rowIndex 
+     * @param colIndex 
+     * @param candidateIndex [0 - 3]
+     * @returns 
+     */
+    const updateBoardToShowCandidate = (board: Cell[][], rowIndex: number, colIndex: number, candidateIndex: number): Cell[][] => {
+        const newBoard: Cell[][] = Array(board.length).fill(null).map(() => []);
+        for (let i = 0; i < board.length; i++) {
+            for (let j = 0; j < board[0].length; j++) {
+                const cell: Cell = board[i][j];
+                if (cell.type === 'card' && cell.isPlayed === false && i === rowIndex && j === colIndex) {
+                    cell.areCandidatesVisible.forEach((visibility, index) => {
+                        if (index === candidateIndex) cell.areCandidatesVisible[index] = !visibility;
+                    });
+                }
                 newBoard[i][j] = cell;
             }
         }
@@ -271,9 +318,33 @@ function App() {
                 return '';
         }
     }
+    const handleContextMenu = (e: React.MouseEvent, rowIndex: number, colIndex: number) => {
+        e.preventDefault();
+        setIsContextMenuVisible(true);
+        const target = e.currentTarget.getBoundingClientRect();
+        const position: Position = {
+            x: target.left + (target.width * 0.7),
+            y: target.top + (target.height * 0.7),
+            row: rowIndex,
+            column: colIndex
+        };
+        console.log('Right click', position);
+        setContextMenuPosition(position)
+    };
 
     return (
         <div className='homepage'>
+            {
+                (isContextMenuVisible && gameState === 'playing') && 
+                <CandidatesContextMenu
+                    ref={contectMenuRef}
+                    setIsContextMenuVisible={setIsContextMenuVisible} 
+                    position={contextMenuPosition}
+                    updateBoardToShowCandidate={updateBoardToShowCandidate}
+                    board={board}
+                    setBoard={setBoard}
+                ></CandidatesContextMenu>
+            }
             <div className='gameboard'>
                 <div className={`playgrid ${checkState(gameState, ['idle', 'starting', 'level-advancing', 'game-over']) ? 'inactive' : ''}`}>
                     {board.map((row: Cell[], i: number) =>
@@ -281,16 +352,25 @@ function App() {
                             switch (el.type) {
                                 case 'card':
                                     return (
-                                        <div key={j + i * cols} className={`playgrid-element ${el.isPlayed ? 'clicked' : 'clickable'}`} onClick={() => handleCardClick(j + i * cols)}>
+                                        <div
+                                            key={j + i * cols}
+                                            className={`playgrid-element ${el.isPlayed ? 'clicked' : 'clickable'} ${isContextMenuVisible && contextMenuPosition.row === i && contextMenuPosition.column === j ? 'right-clicked' : ''}`}
+                                            onClick={() => handleCardClick(j + i * cols)}
+                                            onContextMenu={(e) => handleContextMenu(e, i, j)}
+                                        >
                                             {el.isPlayed ? el.value : '?'}
+                                            {el.areCandidatesVisible[0] && <div className='candidates-container top-left'>0</div>}
+                                            {el.areCandidatesVisible[1] && <div className='candidates-container top-right'>1</div>}
+                                            {el.areCandidatesVisible[2] &&  <div className='candidates-container bottom-left'>2</div>}
+                                            {el.areCandidatesVisible[3] && <div className='candidates-container bottom-right'>3</div>}
+
                                         </div>);
                                 case 'counter':
                                     return (<div key={j + i * cols} className={`playgrid-element ${getCounterCardBackgroundColor(i, j)}`}>{`${el.bomb_value}, ${el.count_value}`}</div>);
                                 default:
                                     return (<div key={j + i * cols} className='playgrid-element'>{j + i * cols}</div>);
                             }
-                        }
-                        )
+                        })
                     )}
                 </div>
             </div>

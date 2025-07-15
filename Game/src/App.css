@@ -56,6 +56,7 @@
     padding: 3rem;
     display: flex;
     justify-content: center;
+    position: relative;
 }
 
 .gameboard {
@@ -119,7 +120,7 @@
 .playgrid {
     aspect-ratio: 1;
     max-height: 100%;
-    border: 1px solid blue;
+    border: 1px solid #2b2be4;
     border-radius: 10px;
     padding: 1rem;
     margin: 0 auto;
@@ -145,6 +146,7 @@
     min-width: 13%;
     max-width: 13%;
     pointer-events: none;
+    position: relative;
     /* Used to handle the flip animation when clicked */
     transition: transform 1s;
     transform-style: preserve-3d;
@@ -155,8 +157,9 @@
     cursor: pointer;
 }
 
-.playgrid-element.clickable:hover {
-    border-color: blue;
+.playgrid-element.clickable:hover,
+.playgrid-element.clickable.right-clicked {
+    border-color: #2b2be4;
     background-color: #585858;
 }
 
@@ -196,7 +199,7 @@
 
 .playmenu {
     flex: 1;
-    border: 1px solid blue;
+    border: 1px solid #2b2be4;
     padding: 1rem;
     border-radius: 10px;
     padding: 1rem;
@@ -285,4 +288,96 @@
 
 .button-container {
     margin-top: 1rem;
+}
+
+.context-menu-container {
+    position: absolute;
+    border: 1px solid lightgray;
+    border-radius: 10px;
+    z-index: 10;
+    background-color: #242424;
+    opacity: 0.9;
+}
+
+.context-menu-title {
+    font-size: small;
+    padding: 0.5rem;
+    border-bottom: 1px solid lightgray;
+}
+
+.context-menu {
+    list-style: none;
+    padding: 0.1rem 0;
+}
+
+.context-menu-candidate {
+    font-size: small;
+    border-radius: 8px;
+    padding: 0.1rem;
+}
+
+.context-menu-candidate.toggled {
+    background-color: green;
+}
+
+.context-menu-candidate:hover {
+    background-color: #2b2be4;
+    cursor: pointer;
+}
+
+.context-menu-close-button {
+    font-size: small;
+    border-radius: 8px;
+    padding: 0.1rem;
+}
+
+.context-menu-close-button:hover {
+    background-color: #af0505;
+    cursor: pointer;
+}
+
+.candidates-container {
+    position: absolute;
+    line-height: 1;
+    --candidate-padding: 0.5rem;
+}
+
+.candidates-container.top-left {
+    top: 0;
+    left: 0;
+    width: 50%;
+    height: 50%;
+    padding: var(--candidate-padding) 0 0 var(--candidate-padding);
+    text-align: left;
+    align-content: start;
+}
+
+.candidates-container.top-right {
+    top: 0;
+    right: 0;
+    width: 50%;
+    height: 50%;
+    padding: var(--candidate-padding) var(--candidate-padding) 0 0;
+    text-align: right;
+    align-content: start;
+}
+
+.candidates-container.bottom-right {
+    bottom: 0;
+    right: 0;
+    width: 50%;
+    height: 50%;
+    padding: 0 var(--candidate-padding) var(--candidate-padding) 0;
+    text-align: right;
+    align-content: end;
+}
+
+.candidates-container.bottom-left {
+    bottom: 0;
+    left: 0;
+    width: 50%;
+    height: 50%;
+    padding: 0 0 var(--candidate-padding) var(--candidate-padding);
+    text-align: left;
+    align-content: end;
 }

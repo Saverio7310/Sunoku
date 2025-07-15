@@ -3,7 +3,8 @@ export type GameState = 'idle' | 'starting' | 'playing' | 'level-advancing' | 'g
 export type Card = {
     type: 'card',
     value: number,
-    isPlayed: boolean
+    isPlayed: boolean,
+    areCandidatesVisible: boolean[]
 };
 
 export type Counter = {
@@ -31,4 +32,11 @@ export type LevelData = {
 export type RecordScore = {
     value: number,
     date: string
+}
+
+export type Position = {
+    x: number,
+    y: number,
+    row: number,
+    column: number
 }

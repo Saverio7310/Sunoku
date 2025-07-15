@@ -68,7 +68,8 @@ export class Board {
                 cell = {
                     type: "card",
                     isPlayed: false,
-                    value: listValue
+                    value: listValue,
+                    areCandidatesVisible: Array(4).fill(null).map(() => false)
                 };
                 matrix[i].push(cell);
                 if (listValue === 0) {

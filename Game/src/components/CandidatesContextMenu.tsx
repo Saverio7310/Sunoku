@@ -1,6 +1,6 @@
 import type { Card, Cell, Position } from "../types/gameTypes";
 
-type Props = {
+type CandidatesContextMenuProps = {
     ref: React.RefObject<HTMLDivElement | null>,
     setIsContextMenuVisible: React.Dispatch<React.SetStateAction<boolean>>,
     position: Position,
@@ -16,7 +16,7 @@ function CandidatesContextMenu({
         updateBoardToShowCandidate, 
         board,
         setBoard
-    }: Props) {
+    }: CandidatesContextMenuProps) {
 
     const candidates: number[] = [0,1,2,3];
     const candidatesToggled = (board[position.row][position.column] as Card).areCandidatesVisible;

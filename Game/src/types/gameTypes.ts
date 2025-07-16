@@ -1,3 +1,10 @@
+export type Theme = 'dark' | 'light';
+
+export type ThemeContextType = {
+  theme: Theme;
+  switchTheme: () => void;
+};
+
 export type GameState = 'idle' | 'starting' | 'playing' | 'level-advancing' | 'game-over';
 
 export type Card = {

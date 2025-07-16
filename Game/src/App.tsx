@@ -1,9 +1,12 @@
-import { useEffect, useRef, useState } from 'react';
+import { useContext, useEffect, useRef, useState } from 'react';
 import './App.css'
-import { type LevelData, type Cell, type GameState, type Message, type RecordScore, type Position } from './types/gameTypes';
+import './styles/colors.css'
+import { type LevelData, type Cell, type GameState, type Message, type RecordScore, type Position, type ThemeContextType } from './types/gameTypes';
 import { Board } from './model/Board';
 import { retrieveRecordScore, saveRecordScore } from './utils/localStorage';
 import CandidatesContextMenu from './components/CandidatesContextMenu';
+import { ThemeContext } from './components/ThemeContext';
+import Header from './components/Header';
 
 function App() {
     const [gameState, setGameState] = useState<GameState>('idle');
@@ -66,7 +69,10 @@ function App() {
     const [message, setMessage] = useState<Message>({ type: 'warning', text: 'Press Start!' });
     const [isContextMenuVisible, setIsContextMenuVisible] = useState<boolean>(false);
     const [contextMenuPosition, setContextMenuPosition] = useState<Position>({ x: 0, y: 0, row: 0, column: 0 });
+
     const contectMenuRef = useRef<HTMLDivElement>(null);
+
+    const { theme } = useContext<ThemeContextType>(ThemeContext);
 
     /**
      * Check if this is correct []
@@ -93,7 +99,7 @@ function App() {
         }
     }, []);
 
-    console.log('Rendering App!');
+    console.log('Rendering App!', theme);
 
     /* const rows: number = Board.BOARD_ROWS; */
     const cols: number = Board.BOARD_COLS;
@@ -178,7 +184,10 @@ function App() {
         for (let i = 0; i < board.length; i++) {
             for (let j = 0; j < board[0].length; j++) {
                 const cell: Cell = board[i][j];
-                if (cell.type === 'card' && cell.isPlayed === false) cell.isPlayed = true;
+                if (cell.type === 'card' && cell.isPlayed === false) {
+                    cell.isPlayed = true;
+                    cell.areCandidatesVisible = Array(4).fill(null).map(() => false);
+                }
                 revealedBoard[i][j] = cell;
             }
         }
@@ -333,84 +342,89 @@ function App() {
     };
 
     return (
-        <div className='homepage'>
-            {
-                (isContextMenuVisible && gameState === 'playing') && 
-                <CandidatesContextMenu
-                    ref={contectMenuRef}
-                    setIsContextMenuVisible={setIsContextMenuVisible} 
-                    position={contextMenuPosition}
-                    updateBoardToShowCandidate={updateBoardToShowCandidate}
-                    board={board}
-                    setBoard={setBoard}
-                ></CandidatesContextMenu>
-            }
-            <div className='gameboard'>
-                <div className={`playgrid ${checkState(gameState, ['idle', 'starting', 'level-advancing', 'game-over']) ? 'inactive' : ''}`}>
-                    {board.map((row: Cell[], i: number) =>
-                        row.map((el: Cell, j: number) => {
-                            switch (el.type) {
-                                case 'card':
-                                    return (
-                                        <div
-                                            key={j + i * cols}
-                                            className={`playgrid-element ${el.isPlayed ? 'clicked' : 'clickable'} ${isContextMenuVisible && contextMenuPosition.row === i && contextMenuPosition.column === j ? 'right-clicked' : ''}`}
-                                            onClick={() => handleCardClick(j + i * cols)}
-                                            onContextMenu={(e) => handleContextMenu(e, i, j)}
-                                        >
-                                            {el.isPlayed ? el.value : '?'}
-                                            {el.areCandidatesVisible[0] && <div className='candidates-container top-left'>0</div>}
-                                            {el.areCandidatesVisible[1] && <div className='candidates-container top-right'>1</div>}
-                                            {el.areCandidatesVisible[2] &&  <div className='candidates-container bottom-left'>2</div>}
-                                            {el.areCandidatesVisible[3] && <div className='candidates-container bottom-right'>3</div>}
+        <>
+            <div className={`app ${theme}`}>
+                <Header />
+                <div className='homepage'>
+                    {
+                        (isContextMenuVisible && gameState === 'playing') &&
+                        <CandidatesContextMenu
+                            ref={contectMenuRef}
+                            setIsContextMenuVisible={setIsContextMenuVisible}
+                            position={contextMenuPosition}
+                            updateBoardToShowCandidate={updateBoardToShowCandidate}
+                            board={board}
+                            setBoard={setBoard}
+                        ></CandidatesContextMenu>
+                    }
+                    <div className='gameboard'>
+                        <div className={`playgrid ${checkState(gameState, ['idle', 'starting', 'level-advancing', 'game-over']) ? 'inactive' : ''}`}>
+                            {board.map((row: Cell[], i: number) =>
+                                row.map((el: Cell, j: number) => {
+                                    switch (el.type) {
+                                        case 'card':
+                                            return (
+                                                <div
+                                                    key={j + i * cols}
+                                                    className={`playgrid-element ${el.isPlayed ? 'clicked' : 'clickable'} ${isContextMenuVisible && contextMenuPosition.row === i && contextMenuPosition.column === j ? 'right-clicked' : ''}`}
+                                                    onClick={() => handleCardClick(j + i * cols)}
+                                                    onContextMenu={(e) => handleContextMenu(e, i, j)}
+                                                >
+                                                    {el.isPlayed ? el.value : '?'}
+                                                    {el.areCandidatesVisible[0] && <div className='candidates-container top-left'>0</div>}
+                                                    {el.areCandidatesVisible[1] && <div className='candidates-container top-right'>1</div>}
+                                                    {el.areCandidatesVisible[2] && <div className='candidates-container bottom-left'>2</div>}
+                                                    {el.areCandidatesVisible[3] && <div className='candidates-container bottom-right'>3</div>}
 
-                                        </div>);
-                                case 'counter':
-                                    return (<div key={j + i * cols} className={`playgrid-element ${getCounterCardBackgroundColor(i, j)}`}>{`${el.bomb_value}, ${el.count_value}`}</div>);
-                                default:
-                                    return (<div key={j + i * cols} className='playgrid-element'>{j + i * cols}</div>);
-                            }
-                        })
-                    )}
-                </div>
-            </div>
-            <div className='menu'>
-                <div className='playmenu'>
-                    <div className='current-score'>
-                        <h1>Current score: {gameScore}</h1>
-                    </div>
-                    <div className='record-score'>
-                        <h2>Record high: {recordScore}</h2>
-                    </div>
-                    <div className='tab-holder'>
-                        <div className='tab-container'>
-                            <ul className='tabs'>
-                                <li className={`tab ${activeTabIndex === 0 ? 'active' : ''}`} onClick={() => handleTabClick(0)}>Game stats</li>
-                                <li className={`tab ${activeTabIndex === 1 ? 'active' : ''}`} onClick={() => handleTabClick(1)}>How to play</li>
-                            </ul>
-                        </div>
-                        <div className='tab-content'>
-                            <div className={`tab-pane ${activeTabIndex === 0 ? 'active' : ''}`}>
-                                <h3>Level: {level + 1}</h3>
-                                <h3>Level score: {levelScore}</h3>
-                                <h3 className={message.type}>{message.text}</h3>
-                            </div>
-                            <div className={`tab-pane ${activeTabIndex === 1 ? 'active' : ''}`}>
-                                <p className='game-description'>
-                                    • Your goal is to find all 3's and 2's hidden in the grid.<br></br>
-                                    • The last column and the last row shows how many 0's there are in the related column/row and the total sum of the numers contained.<br></br>
-                                    • If you find them all, you will win the level and proceed to the next one.<br></br>
-                                    • Finding any 0 will make you lose the game right away.
-                                </p>
-                            </div>
+                                                </div>);
+                                        case 'counter':
+                                            return (<div key={j + i * cols} className={`playgrid-element ${getCounterCardBackgroundColor(i, j)}`}>{`${el.bomb_value}, ${el.count_value}`}</div>);
+                                        default:
+                                            return (<div key={j + i * cols} className='playgrid-element'>{j + i * cols}</div>);
+                                    }
+                                })
+                            )}
                         </div>
                     </div>
-                    <div className='button-container'>
-                        <button onClick={() => handleStartGame(level)}>Start</button>
+                    <div className='menu'>
+                        <div className='playmenu'>
+                            <div className='current-score'>
+                                <h1 className='current-score-title'>Current score: {gameScore}</h1>
+                            </div>
+                            <div className='record-score'>
+                                <h2>Record high: {recordScore}</h2>
+                            </div>
+                            <div className='tab-holder'>
+                                <div className='tab-container'>
+                                    <ul className='tabs'>
+                                        <li className={`tab ${activeTabIndex === 0 ? 'active' : ''}`} onClick={() => handleTabClick(0)}>Game stats</li>
+                                        <li className={`tab ${activeTabIndex === 1 ? 'active' : ''}`} onClick={() => handleTabClick(1)}>How to play</li>
+                                    </ul>
+                                </div>
+                                <div className='tab-content'>
+                                    <div className={`tab-pane ${activeTabIndex === 0 ? 'active' : ''}`}>
+                                        <h3 className='current-level-title'>Level: {level + 1}</h3>
+                                        <h3 className='current-level-score-title'>Level score: {levelScore}</h3>
+                                        <h3 className={message.type}>{message.text}</h3>
+                                    </div>
+                                    <div className={`tab-pane ${activeTabIndex === 1 ? 'active' : ''}`}>
+                                        <p className='game-description'>
+                                            • Your goal is to find all 3's and 2's hidden in the grid.<br></br>
+                                            • The last column and the last row shows how many 0's there are in the related column/row and the total sum of the numers contained.<br></br>
+                                            • If you find them all, you will win the level and proceed to the next one.<br></br>
+                                            • Finding any 0 will make you lose the game right away.
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div className='button-container'>
+                                <button onClick={() => handleStartGame(level)}>Start</button>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
-        </div>
+        </>
     );
 }
 

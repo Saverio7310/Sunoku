@@ -4,8 +4,16 @@
     margin: 0;
     text-align: center;
     display: flex;
+    flex-direction: column;
     justify-content: center;
     align-items: stretch;
+}
+
+.app {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
 }
 
 .logo {
@@ -37,14 +45,6 @@
     a:nth-of-type(2) .logo {
         animation: logo-spin infinite 20s linear;
     }
-}
-
-.card {
-    padding: 2em;
-}
-
-.read-the-docs {
-    color: #888;
 }
 
 /* PREVIOUS */
@@ -197,6 +197,11 @@
     justify-content: center;
 }
 
+.current-score-title {
+    font-size: 2rem;
+    line-height: 1.1;
+}
+
 .playmenu {
     flex: 1;
     border: 1px solid #2b2be4;
@@ -339,6 +344,7 @@
 .candidates-container {
     position: absolute;
     line-height: 1;
+    color: #b5b520;
     --candidate-padding: 0.5rem;
 }
 

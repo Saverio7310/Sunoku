@@ -1,7 +1,10 @@
 .header {
+    flex: 1;
+    max-height: 65px;
+    flex-shrink: 0;
     display: flex;
+    /* display: none; */
     justify-content: end;
-    min-height: 65px;
     position: relative;
     background-color: var(--background-color-header);
 }
@@ -11,7 +14,6 @@
 }
 
 .title {
-    color: black;
     height: 100%;
     width: 100%;
     align-content: center;
@@ -43,7 +45,7 @@
 .theme-slider {
     position: absolute;
     cursor: pointer;
-    background-color: brown;
+    background-color: var(--background-color-theme-slider);
     top: 0;
     left: 0;
     width: 100%;
@@ -55,7 +57,7 @@
     position: absolute;
     content: "";
     cursor: pointer;
-    background-color: white;
+    background-color: var(--background-color-theme-slider-before);
     top: 5px;
     left: 5px;
     width: 20px;
@@ -65,7 +67,7 @@
 }
 
 .theme-input:checked+.theme-slider {
-    background-color: green;
+    background-color: var(--background-color-theme-slider-input-checked);
 }
 
 .theme-input:checked+.theme-slider::before {

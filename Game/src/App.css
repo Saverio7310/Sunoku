@@ -1,69 +1,22 @@
 #root {
-    width: 100%;
-    height: 100%;
-    margin: 0;
-    text-align: center;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: stretch;
-}
-
-.app {
     height: 100%;
     display: flex;
     flex-direction: column;
-    justify-content: center;
 }
-
-.logo {
-    height: 6em;
-    padding: 1.5em;
-    will-change: filter;
-    transition: filter 300ms;
-}
-
-.logo:hover {
-    filter: drop-shadow(0 0 2em #646cffaa);
-}
-
-.logo.react:hover {
-    filter: drop-shadow(0 0 2em #61dafbaa);
-}
-
-@keyframes logo-spin {
-    from {
-        transform: rotate(0deg);
-    }
-
-    to {
-        transform: rotate(360deg);
-    }
-}
-
-@media (prefers-reduced-motion: no-preference) {
-    a:nth-of-type(2) .logo {
-        animation: logo-spin infinite 20s linear;
-    }
-}
-
-/* PREVIOUS */
 
 .homepage {
+    padding: 2rem;
     flex: 1;
-    min-width: 100%;
-    min-height: 100%;
-    padding: 3rem;
     display: flex;
-    justify-content: center;
+    /* display: none; */
     position: relative;
 }
 
 .gameboard {
     flex: 2;
-    /* border: 1px solid lightblue; */
     margin: 0 1rem;
     display: flex;
+    /* display: none; */
     flex-direction: column;
     justify-content: center;
     align-items: center;
@@ -77,50 +30,12 @@
     display: flex;
 }
 
-.gameboard.entering {
-    animation: slideInFromLeft 0.7s ease-out forwards;
-}
-
-.gameboard.exiting {
-    animation: slideOutFromRight 0.7s ease-out forwards;
-}
-
-@keyframes slideInFromLeft {
-    0% {
-        transform: translateX(-100%);
-        /* Start completely off-screen to the left */
-        opacity: 0;
-        /* Start invisible */
-    }
-
-    100% {
-        transform: translateX(0);
-        /* End at its original position */
-        opacity: 1;
-        /* End fully visible */
-    }
-}
-
-@keyframes slideOutFromRight {
-    0% {
-        transform: translateX(0);
-        /* End at its original position */
-        opacity: 1;
-        /* End fully visible */
-    }
-
-    100% {
-        transform: translateX(-100%);
-        /* Start completely off-screen to the left */
-        opacity: 0;
-        /* Start invisible */
-    }
-}
-
 .playgrid {
+    flex: 1;
     aspect-ratio: 1;
-    max-height: 100%;
-    border: 1px solid #2b2be4;
+    min-width: 100%;
+    max-width: 100%;
+    border: 1px solid var(--border-color-playgrid);
     border-radius: 10px;
     padding: 1rem;
     margin: 0 auto;
@@ -140,8 +55,9 @@
 .playgrid-element {
     flex: 1;
     aspect-ratio: 1;
+    text-align: center;
     align-content: center;
-    border: 1px solid lightgray;
+    border: 1px solid var(--border-color-playgrid-element);
     border-radius: 10px;
     min-width: 13%;
     max-width: 13%;
@@ -159,38 +75,37 @@
 
 .playgrid-element.clickable:hover,
 .playgrid-element.clickable.right-clicked {
-    border-color: #2b2be4;
-    background-color: #585858;
+    border-color: var(--border-color-playgrid-element-clickable);
+    background-color: var(--background-color-playgrid-element-clickable);
 }
 
 .playgrid-element.clicked {
-    background-color: cadetblue;
+    background-color: var(--background-color-playgrid-element-clicked);
     transform: rotateY(360deg);
 }
 
 .playgrid-element.red {
-    background-color: red;
+    background-color: var(--background-color-playgrid-element-red);
 }
 
 .playgrid-element.green {
-    background-color: rgb(102, 163, 10);
+    background-color: var(--background-color-playgrid-element-green);
 }
 
 .playgrid-element.yellow {
-    background-color: rgb(220, 220, 22);
+    background-color: var(--background-color-playgrid-element-yellow);
 }
 
 .playgrid-element.blue {
-    background-color: cornflowerblue;
+    background-color: var(--background-color-playgrid-element-blue);
 }
 
 .playgrid-element.purple {
-    background-color: darkorchid;
+    background-color: var(--background-color-playgrid-element-purple);
 }
 
 .menu {
     flex: 1;
-    /* border: 1px solid lightblue; */
     margin: 0 1rem;
     display: flex;
     flex-direction: column;
@@ -204,7 +119,7 @@
 
 .playmenu {
     flex: 1;
-    border: 1px solid #2b2be4;
+    border: 1px solid var(--border-color-playmenu);
     padding: 1rem;
     border-radius: 10px;
     padding: 1rem;
@@ -224,7 +139,7 @@
 }
 
 .tab-container {
-    border: 1px solid lightgray;
+    border: 1px solid var(--border-color-tab-container);
     border-radius: 10px 10px 0px 0px;
 }
 
@@ -242,11 +157,11 @@
 }
 
 .tab.active {
-    background-color: #a09898;
+    background-color: var(--background-color-tab-active);
 }
 
 .tab:hover {
-    background-color: #585858;
+    background-color: var(--background-color-tab-hover);
 }
 
 .tab-content {
@@ -256,7 +171,7 @@
 .tab-pane {
     height: 100%;
     display: none;
-    border: 1px solid lightgray;
+    border: 1px solid var(--border-color-tab-pane);
     border-top-width: 0px;
     border-radius: 0px 0px 10px 10px;
 }
@@ -266,16 +181,20 @@
     text-align: left;
 }
 
+.log {
+    color: var(--color-text);
+}
+
 .warning {
-    color: #b5b520;
+    color: var(--color-text-warning);
 }
 
 .error {
-    color: #850f0f;
+    color: var(--color-text-error);
 }
 
 .success {
-    color: green;
+    color: var(--color-text-success);
 }
 
 .tab-pane.active {
@@ -297,10 +216,10 @@
 
 .context-menu-container {
     position: absolute;
-    border: 1px solid lightgray;
+    border: 1px solid var(--border-color-context-menu-container);
     border-radius: 10px;
     z-index: 10;
-    background-color: #242424;
+    background-color: var(--background-color-context-menu-container);
     opacity: 0.9;
 }
 
@@ -322,11 +241,11 @@
 }
 
 .context-menu-candidate.toggled {
-    background-color: green;
+    background-color: var(--background-color-context-menu-candidate);
 }
 
 .context-menu-candidate:hover {
-    background-color: #2b2be4;
+    background-color: var(--background-color-context-menu-candidate-hover);
     cursor: pointer;
 }
 
@@ -337,14 +256,14 @@
 }
 
 .context-menu-close-button:hover {
-    background-color: #af0505;
+    background-color: var(--background-color-context-menu-close-button);
     cursor: pointer;
 }
 
 .candidates-container {
     position: absolute;
     line-height: 1;
-    color: #b5b520;
+    color: var(--color-text-candidates-container);
     --candidate-padding: 0.5rem;
 }
 

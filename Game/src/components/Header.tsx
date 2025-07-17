@@ -16,7 +16,7 @@ function Header() {
     return (
         <div className='header'>
             <div className='title-container'>
-                <h1 className='title'>Title</h1>
+                <h1 className='title'>Sunoku</h1>
             </div>
             <div className='theme-toggle'>
                 <label className="theme-switch">

@@ -1,0 +1,161 @@
+/* .gameboard {
+    flex: 2;
+    margin: 0 1rem;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+.gameboard.hidden {
+    display: none;
+}
+
+.gameboard.visible {
+    display: flex;
+}
+
+.playgrid {
+    flex: 1;
+    aspect-ratio: 1;
+    min-width: 100%;
+    max-width: 100%;
+    border: 1px solid var(--border-color-playgrid);
+    border-radius: 10px;
+    padding: 1rem;
+    margin: 0 auto;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    align-content: space-between;
+    gap: 2%;
+    perspective: 1000px;
+}
+
+.playgrid.inactive {
+    pointer-events: none;
+}
+
+.playgrid-element {
+    flex: 1;
+    aspect-ratio: 1;
+    text-align: center;
+    align-content: center;
+    border: 1px solid var(--border-color-playgrid-element);
+    border-radius: 10px;
+    min-width: 13%;
+    max-width: 13%;
+    pointer-events: none;
+    position: relative;
+    transition: transform 1s;
+    transform-style: preserve-3d;
+}
+
+.playgrid-element.clickable {
+    pointer-events: auto;
+    cursor: pointer;
+}
+
+.playgrid-element.clickable:hover,
+.playgrid-element.clickable.right-clicked {
+    border-color: var(--border-color-playgrid-element-clickable);
+    background-color: var(--background-color-playgrid-element-clickable);
+}
+
+.playgrid-element.clicked {
+    background-color: var(--background-color-playgrid-element-clicked);
+    transform: rotateY(360deg);
+}
+
+.playgrid-element.red {
+    background-color: var(--background-color-playgrid-element-red);
+}
+
+.playgrid-element.green {
+    background-color: var(--background-color-playgrid-element-green);
+}
+
+.playgrid-element.yellow {
+    background-color: var(--background-color-playgrid-element-yellow);
+}
+
+.playgrid-element.blue {
+    background-color: var(--background-color-playgrid-element-blue);
+}
+
+.playgrid-element.purple {
+    background-color: var(--background-color-playgrid-element-purple);
+}
+
+.candidates-container {
+    position: absolute;
+    line-height: 1;
+    color: var(--color-text-candidates-container);
+    --candidate-padding: 0.5rem;
+}
+
+.candidates-container.top-left {
+    top: 0;
+    left: 0;
+    width: 50%;
+    height: 50%;
+    padding: var(--candidate-padding) 0 0 var(--candidate-padding);
+    text-align: left;
+    align-content: start;
+}
+
+.candidates-container.top-right {
+    top: 0;
+    right: 0;
+    width: 50%;
+    height: 50%;
+    padding: var(--candidate-padding) var(--candidate-padding) 0 0;
+    text-align: right;
+    align-content: start;
+}
+
+.candidates-container.bottom-right {
+    bottom: 0;
+    right: 0;
+    width: 50%;
+    height: 50%;
+    padding: 0 var(--candidate-padding) var(--candidate-padding) 0;
+    text-align: right;
+    align-content: end;
+}
+
+.candidates-container.bottom-left {
+    bottom: 0;
+    left: 0;
+    width: 50%;
+    height: 50%;
+    padding: 0 0 var(--candidate-padding) var(--candidate-padding);
+    text-align: left;
+    align-content: end;
+} */
+
+.gameboard {
+    border: 2px solid green;
+    flex: 2;
+    padding: 10px;
+    display: flex;
+}
+
+.playgrid {
+    margin: 0 auto;
+    padding: 1rem;
+    perspective: 1000px;
+    aspect-ratio: 1;
+    border: 2px solid black;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    align-content: space-between;
+    gap: 2%;
+}
+
+.playgrid-element {
+    aspect-ratio: 1;
+    width: calc(100% / 6 - (5 * 2% / 6));
+    border: 2px solid red;
+}

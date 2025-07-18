@@ -1,0 +1,19 @@
+#root {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+}
+
+/* .homepage {
+    padding: 2rem;
+    flex: 1;
+    display: flex;
+    position: relative;
+} */
+
+.homepage {
+    border: 2px solid blue;
+    padding: 2rem;
+    flex: 1;
+    display: flex;
+}

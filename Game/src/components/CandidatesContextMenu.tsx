@@ -1,4 +1,5 @@
 import type { Card, Cell, Position } from "../types/gameTypes";
+import '../styles/contextMenu.css'
 
 type CandidatesContextMenuProps = {
     ref: React.RefObject<HTMLDivElement | null>,

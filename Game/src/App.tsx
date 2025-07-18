@@ -1,5 +1,7 @@
 import { useContext, useEffect, useRef, useState } from 'react';
-import './App.css'
+import './styles/App.css'
+import './styles/board.css'
+import './styles/menu.css'
 import { type LevelData, type Cell, type GameState, type Message, type RecordScore, type Position, type ThemeContextType } from './types/gameTypes';
 import { Board } from './model/Board';
 import { retrieveRecordScore, saveRecordScore } from './utils/localStorage';

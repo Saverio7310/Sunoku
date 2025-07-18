@@ -1,0 +1,45 @@
+.context-menu-container {
+    position: absolute;
+    border: 1px solid var(--border-color-context-menu-container);
+    border-radius: 10px;
+    z-index: 10;
+    background-color: var(--background-color-context-menu-container);
+    opacity: 0.9;
+}
+
+.context-menu-title {
+    font-size: small;
+    padding: 0.5rem;
+    border-bottom: 1px solid lightgray;
+}
+
+.context-menu {
+    list-style: none;
+    padding: 0.1rem 0;
+}
+
+.context-menu-candidate {
+    font-size: small;
+    border-radius: 8px;
+    padding: 0.1rem;
+}
+
+.context-menu-candidate.toggled {
+    background-color: var(--background-color-context-menu-candidate);
+}
+
+.context-menu-candidate:hover {
+    background-color: var(--background-color-context-menu-candidate-hover);
+    cursor: pointer;
+}
+
+.context-menu-close-button {
+    font-size: small;
+    border-radius: 8px;
+    padding: 0.1rem;
+}
+
+.context-menu-close-button:hover {
+    background-color: var(--background-color-context-menu-close-button);
+    cursor: pointer;
+}

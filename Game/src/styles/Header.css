@@ -1,9 +1,6 @@
 .header {
-    flex: 1;
-    max-height: 65px;
-    flex-shrink: 0;
+    height: 65px;
     display: flex;
-    display: none;
     justify-content: end;
     position: relative;
     background-color: var(--background-color-header);

@@ -5,7 +5,7 @@
     flex-direction: column;
     justify-content: center;
     align-items: center;
-}
+} */
 
 .gameboard.hidden {
     display: none;
@@ -15,7 +15,7 @@
     display: flex;
 }
 
-.playgrid {
+/* .playgrid {
     flex: 1;
     aspect-ratio: 1;
     min-width: 100%;
@@ -30,13 +30,13 @@
     align-content: space-between;
     gap: 2%;
     perspective: 1000px;
-}
+} */
 
 .playgrid.inactive {
     pointer-events: none;
 }
 
-.playgrid-element {
+/* .playgrid-element {
     flex: 1;
     aspect-ratio: 1;
     text-align: center;
@@ -49,7 +49,7 @@
     position: relative;
     transition: transform 1s;
     transform-style: preserve-3d;
-}
+} */
 
 .playgrid-element.clickable {
     pointer-events: auto;
@@ -132,16 +132,27 @@
     padding: 0 0 var(--candidate-padding) var(--candidate-padding);
     text-align: left;
     align-content: end;
-} */
+}
 
-.gameboard {
+/* .gameboard {
     border: 2px solid green;
     flex: 2;
     padding: 10px;
     display: flex;
+} */
+
+.gameboard {
+    flex: 2;
+    margin: 0 1rem;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    border: 1px solid var(--border-color-gameboard);
+    border-radius: 10px;
 }
 
-.playgrid {
+/* .playgrid {
     margin: 0 auto;
     padding: 1rem;
     perspective: 1000px;
@@ -152,10 +163,37 @@
     justify-content: space-between;
     align-content: space-between;
     gap: 2%;
+} */
+
+.playgrid {
+    max-height: 100%;
+    margin: auto;
+    padding: 1rem;
+    perspective: 1000px;
+    aspect-ratio: 1;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    align-content: space-between;
+    gap: 2%;
 }
 
-.playgrid-element {
+/* .playgrid-element {
     aspect-ratio: 1;
     width: calc(100% / 6 - (5 * 2% / 6));
     border: 2px solid red;
+} */
+
+.playgrid-element {
+    flex: 1;
+    aspect-ratio: 1;
+    align-content: center;
+    border: 1px solid var(--border-color-playgrid-element);
+    border-radius: 10px;
+    min-width: 13%;
+    max-width: 13%;
+    pointer-events: none;
+    position: relative;
+    transition: transform 1s;
+    transform-style: preserve-3d;
 }

@@ -1,4 +1,4 @@
-/* .header {
+.header {
     flex: 1;
     max-height: 65px;
     flex-shrink: 0;
@@ -7,14 +7,8 @@
     justify-content: end;
     position: relative;
     background-color: var(--background-color-header);
-} */
-
-.header {
-    border: 2px solid red;
-    flex: 1;
-    max-height: 80px;
 }
-/* 
+
 .title-container {
     flex: 1;
 }
@@ -78,4 +72,4 @@
 
 .theme-input:checked+.theme-slider::before {
     transform: translateX(20px);
-} */
+}

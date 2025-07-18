@@ -24,8 +24,8 @@ body.light {
     --background-color-theme-slider: #a52a2a;
     --background-color-theme-slider-before: #ffffff;
     --background-color-theme-slider-input-checked: #008000;
-    --border-color-playgrid: #2b2be4;
-    --border-color-playmenu: #2b2be4;
+    --border-color-gameboard: #2b2be4;
+    --border-color-menu: #2b2be4;
     --border-color-playgrid-element-clickable: #2b2be4;
     --border-color-playgrid-element: #575656;
     --border-color-tab-container: #575656;
@@ -61,8 +61,8 @@ body.dark {
     --background-color-theme-slider: #a52a2a;
     --background-color-theme-slider-before: #ffffff;
     --background-color-theme-slider-input-checked: #008000;
-    --border-color-playgrid: #2b2be4;
-    --border-color-playmenu: #2b2be4;
+    --border-color-gameboard: #2b2be4;
+    --border-color-menu: #2b2be4;
     --border-color-playgrid-element-clickable: #2b2be4;
     --border-color-playgrid-element: #d3d3d3;
     --border-color-tab-container: #d3d3d3;

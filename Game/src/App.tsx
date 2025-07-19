@@ -72,6 +72,7 @@ function App() {
     const [contextMenuPosition, setContextMenuPosition] = useState<Position>({ x: 0, y: 0, row: 0, column: 0 });
 
     const contectMenuRef = useRef<HTMLDivElement>(null);
+    const levelTracker = useRef<number>(0);
 
     const { theme } = useContext<ThemeContextType>(ThemeContext);
 
@@ -225,8 +226,8 @@ function App() {
             setLevelScore(0);
             //setGameScore(0)?
 
-            if (levelScore === 0) setLevel(0);
-            else setLevel(previous => Math.max(0, previous - 1));
+            if (levelScore === 0) levelTracker.current = 0;
+            else levelTracker.current = Math.max(0, levelTracker.current - 1)
 
             setGameState('game-over');
             const newBoard: Cell[][] = revealCompleteBoard();
@@ -246,7 +247,8 @@ function App() {
         setBoard(newBoard);
 
         if (newLevelinfo.TWO === 0 && newLevelinfo.THREE === 0) {
-            setMessage({ type: 'success', text: 'You found every 2 and 3, YOU WON! Click Start for the next level' })
+            setMessage({ type: 'success', text: 'You found every 2 and 3, YOU WON! Click Start for the next level' });
+            setGameState('level-advancing');
             setTimeout(() => {
                 const newBoard: Cell[][] = revealCompleteBoard();
                 setBoard(newBoard);
@@ -259,7 +261,7 @@ function App() {
                     saveRecordScore(totalLevelScore);
                 }
 
-                setLevel(previous => previous + 1)
+                levelTracker.current += 1;
             }, 500);
         }
     }
@@ -276,15 +278,16 @@ function App() {
      * Make the game start
      * @param level 
      */
-    const handleStartGame = (level: number): void => {
-        console.log('Starting with level:', level);
+    const handleStartGame = (): void => {
+        console.log('Starting with level:', levelTracker);
+        setLevel(levelTracker.current);
         setLevelScore(0);
         setGameState('starting');
         setMessage({ type: 'log', text: 'Starting Game!' });
 
         console.log('Matrix creation');
         const boardShuffler = new Board();
-        const [levelData, matrix] = boardShuffler.generateBoard(level);
+        const [levelData, matrix] = boardShuffler.generateBoard(levelTracker.current);
         setTimeout(() => {
             setLevelInfo(levelData);
             setBoard(matrix);
@@ -336,8 +339,9 @@ function App() {
         e.preventDefault();
         setIsContextMenuVisible(true);
         const target = e.currentTarget.getBoundingClientRect();
+        console.log(target);
         const position: Position = {
-            x: target.left + (target.width * 0.7),
+            x: target.left + (target.width * 1.1),
             y: target.top + (target.height * 0.7),
             row: rowIndex,
             column: colIndex
@@ -422,7 +426,13 @@ function App() {
                             </div>
                         </div>
                         <div className='button-container'>
-                            <button onClick={() => handleStartGame(level)}>Start</button>
+                            <button 
+                                className={gameState === 'playing' ? 'not-allowed' : ''}
+                                disabled={gameState === 'playing' ? true : false}
+                                onClick={handleStartGame}
+                            >
+                                Start
+                            </button>
                         </div>
                     </div>
                 </div>

@@ -63,6 +63,18 @@
     transition: .4s;
 }
 
+.theme-slider:hover {
+    background-color: var(--background-color-theme-slider-hover);
+}
+
+.theme-input:checked+.theme-slider:hover {
+    background-color: var(--background-color-theme-slider-before-hover);
+}
+
+/* .theme-slider:hover::before {
+    background-color: var(--background-color-theme-slider-before-hover);
+} */
+
 .theme-input:checked+.theme-slider {
     background-color: var(--background-color-theme-slider-input-checked);
 }

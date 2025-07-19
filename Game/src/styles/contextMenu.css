@@ -5,12 +5,13 @@
     z-index: 10;
     background-color: var(--background-color-context-menu-container);
     opacity: 0.9;
+    font-weight: 600;
 }
 
 .context-menu-title {
     font-size: small;
     padding: 0.5rem;
-    border-bottom: 1px solid lightgray;
+    border-bottom: 1px solid var(--border-color-context-menu-container);
 }
 
 .context-menu {

@@ -32,6 +32,7 @@ function Menu({
         message
     }: MenuProps) {
     const [activeTabIndex, setActiveTabIndex] = useState<number>(0);
+    const [level, setLevel] = useState<number>(0);
 
     /**
      * Changes the currently visible tab of the menu
@@ -47,7 +48,7 @@ function Menu({
      */
     const handleStartGame = (): void => {
         console.log('Starting with level:', levelTracker);
-        /* setLevel(levelTracker.current); */
+        setLevel(levelTracker.current);
         setLevelScore(0);
         setGameState('starting');
         setMessage({ type: 'log', text: 'Starting Game!' });
@@ -81,7 +82,7 @@ function Menu({
                     </div>
                     <div className='tab-content'>
                         <div className={`tab-pane ${activeTabIndex === 0 ? 'active' : ''}`}>
-                            <h3 className='current-level-title'>Level: {levelTracker.current + 1}</h3>
+                            <h3 className='current-level-title'>Level: {level + 1}</h3>
                             <h3 className='current-level-score-title'>Level score: {levelScore}</h3>
                             <h3 className={message.type}>{message.text}</h3>
                         </div>

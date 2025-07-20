@@ -91,6 +91,7 @@ function Menu({
                                 • Your goal is to find all 3's and 2's hidden in the grid.<br></br>
                                 • The last column and the last row shows how many 0's there are in the related column/row and the total sum of the numers contained.<br></br>
                                 • If you find them all, you will win the level and proceed to the next one.<br></br>
+                                • You can right-click on any card to add a candidate value.<br></br>
                                 • Finding any 0 will make you lose the game right away.
                             </p>
                         </div>

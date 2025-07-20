@@ -107,7 +107,7 @@ function Gameboard({
         const newBoard: Cell[][] = updateBoardWithFlippedCell(board, row, col);
         setBoard(newBoard);
 
-        if (newLevelinfo.TWO === 0 && newLevelinfo.THREE === 0) {
+        if (newLevelinfo.values[2] === 0 && newLevelinfo.values[3] === 0) {
             setMessage({ type: 'success', text: 'You found every 2 and 3, YOU WON! Click Start for the next level' });
             setGameState('level-advancing');
             setTimeout(() => {
@@ -181,10 +181,10 @@ function Gameboard({
             case 1:
                 break;
             case 2:
-                newLevelinfo.TWO -= 1
+                newLevelinfo.values[2] -= 1
                 break;
             case 3:
-                newLevelinfo.THREE -= 1
+                newLevelinfo.values[3] -= 1
                 break;
             default:
                 console.warn('Unrecognised value')

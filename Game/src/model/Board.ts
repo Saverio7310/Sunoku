@@ -5,12 +5,12 @@ export class Board {
     static BOARD_COLS: number = 5;
     static BOARD_SIZE: number = 25;
     static levelsData: LevelData[] = [
-        { difficulty: 'easy', ZERO: 6, THREE: 0, TWO: 5 },
-        { difficulty: 'easy', ZERO: 7, THREE: 2, TWO: 3 },
-        { difficulty: 'medium', ZERO: 8, THREE: 3, TWO: 2 },
-        { difficulty: 'medium', ZERO: 8, THREE: 3, TWO: 3 },
-        { difficulty: 'hard', ZERO: 10, THREE: 5, TWO: 1 },
-        { difficulty: 'hard', ZERO: 10, THREE: 6, TWO: 2 },
+        { difficulty: 'easy', values: [6, -1, 5, 0] },
+        { difficulty: 'easy', values: [7, -1, 3, 2] },
+        { difficulty: 'medium', values: [8, -1, 2, 3] },
+        { difficulty: 'medium', values: [8, -1, 3, 3] },
+        { difficulty: 'hard', values: [10, -1, 1, 5] },
+        { difficulty: 'hard', values: [10, -1, 2, 6] },
     ];
 
     constructor() {
@@ -19,15 +19,15 @@ export class Board {
     createFlatInitialNumericList(currentLevelData: LevelData): number[] {
         const elements: number[] = [];
         for (let i = 0; i < Board.BOARD_SIZE; i++) {
-            if (currentLevelData.ZERO > 0) {
+            if (currentLevelData.values[0] > 0) {
                 elements.push(0);
-                currentLevelData.ZERO--;
-            } else if (currentLevelData.TWO > 0) {
+                currentLevelData.values[0]--;
+            } else if (currentLevelData.values[2] > 0) {
                 elements.push(2);
-                currentLevelData.TWO--;
-            } else if (currentLevelData.THREE > 0) {
+                currentLevelData.values[2]--;
+            } else if (currentLevelData.values[3] > 0) {
                 elements.push(3);
-                currentLevelData.THREE--;
+                currentLevelData.values[3]--;
             } else {
                 elements.push(1);
             }
@@ -108,14 +108,14 @@ export class Board {
     }
 
     generateBoard(level: number): [LevelData, Cell[][]] {
-        level = Math.min(level, Board.levelsData.length - 1)
-        const currentLevelData: LevelData = { ...Board.levelsData[level] };
+        level = Math.min(level, Board.levelsData.length - 1);
+        const currentLevelData: LevelData = { difficulty: Board.levelsData[level].difficulty, values: [ ...Board.levelsData[level].values ] };
 
         const elements: number[] = this.createFlatInitialNumericList(currentLevelData);
         
         this.shuffleNumericList(elements);
         
         const matrix: Cell[][] = this.createCellMatrixFromNumericList(elements);
-        return [{ ...Board.levelsData[level] }, matrix];
+        return [{ difficulty: Board.levelsData[level].difficulty, values: [ ...Board.levelsData[level].values ] }, matrix];
     }
 }

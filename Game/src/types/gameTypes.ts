@@ -29,11 +29,13 @@ export type Message = {
 
 export type Difficulty = 'easy' | 'medium' | 'hard'
 
+/**
+ * The values number array contains the occurrences of each number. The number is the same as the index.
+ * The number 1 has no meaning, so its occurences are -1
+ */
 export type LevelData = {
     difficulty: Difficulty,
-    ZERO: number,
-    TWO: number,
-    THREE: number,
+    values: number[],
 }
 
 export type RecordScore = {

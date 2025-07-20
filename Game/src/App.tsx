@@ -1,13 +1,19 @@
 import { useContext, useEffect, useRef, useState } from 'react';
+
+import { type LevelData, type Cell, type GameState, type Message, type RecordScore, type Position, type ThemeContextType } from './types/gameTypes';
+
+import Header from './components/Header';
+import Gameboard from './components/Gameboard';
+import Menu from './components/Menu';
+
+import CandidatesContextMenu from './components/CandidatesContextMenu';
+import { ThemeContext } from './components/ThemeContext';
+
 import './styles/App.css'
 import './styles/board.css'
 import './styles/menu.css'
-import { type LevelData, type Cell, type GameState, type Message, type RecordScore, type Position, type ThemeContextType } from './types/gameTypes';
-import { Board } from './model/Board';
-import { retrieveRecordScore, saveRecordScore } from './utils/localStorage';
-import CandidatesContextMenu from './components/CandidatesContextMenu';
-import { ThemeContext } from './components/ThemeContext';
-import Header from './components/Header';
+
+import { retrieveRecordScore } from './utils/localStorage';
 
 function App() {
     const [gameState, setGameState] = useState<GameState>('idle');
@@ -66,7 +72,6 @@ function App() {
     const [gameScore, setGameScore] = useState<number>(0);
     const [recordScore, setRecordScore] = useState<number>(0);
     const [level, setLevel] = useState<number>(0);
-    const [activeTabIndex, setActiveTabIndex] = useState<number>(0);
     const [message, setMessage] = useState<Message>({ type: 'warning', text: 'Press Start!' });
     const [isContextMenuVisible, setIsContextMenuVisible] = useState<boolean>(false);
     const [contextMenuPosition, setContextMenuPosition] = useState<Position>({ x: 0, y: 0, row: 0, column: 0 });
@@ -107,31 +112,6 @@ function App() {
 
     console.log('Rendering App!', theme);
 
-    /* const rows: number = Board.BOARD_ROWS; */
-    const cols: number = Board.BOARD_COLS;
-
-    /**
-     * Flip the Card at the specified `rowIndex` and `colIndex` by setting its `isPlayed` property to true
-     * @param board 
-     * @param rowIndex 
-     * @param colIndex 
-     * @returns 
-     */
-    const updateBoardWithFlippedCell = (board: Cell[][], rowIndex: number, colIndex: number): Cell[][] => {
-        const newBoard: Cell[][] = Array(board.length).fill(null).map(() => []);
-        for (let i = 0; i < board.length; i++) {
-            for (let j = 0; j < board[0].length; j++) {
-                const cell: Cell = board[i][j];
-                if (cell.type === 'card' && cell.isPlayed === false && i === rowIndex && j === colIndex) {
-                    cell.isPlayed = true;
-                    cell.areCandidatesVisible = Array(4).fill(null).map(() => false);
-                }
-                newBoard[i][j] = cell;
-            }
-        }
-        return newBoard;
-    }
-
     /**
      * Show the Candidate (0, 1, 2, 3) for the Card at the specified `rowIndex` and `colIndex`
      * @param board 
@@ -156,200 +136,6 @@ function App() {
         return newBoard;
     }
 
-    /**
-     * Update current LevelData with the just cilicked Cell's value
-     * @param valueSelected 
-     * @returns 
-     */
-    const updateLevelData = (valueSelected: number): LevelData => {
-        const newLevelinfo: LevelData = { ...levelInfo };
-        switch (valueSelected) {
-            case 0:
-                break;
-            case 1:
-                break;
-            case 2:
-                newLevelinfo.TWO -= 1
-                break;
-            case 3:
-                newLevelinfo.THREE -= 1
-                break;
-            default:
-                console.warn('Unrecognised value')
-                break;
-        }
-        return newLevelinfo;
-    }
-
-    /**
-     * Reveal the entire board
-     * @returns 
-     */
-    const revealCompleteBoard = (): Cell[][] => {
-        const revealedBoard: Cell[][] = Array(board.length).fill(null).map(() => []);
-        for (let i = 0; i < board.length; i++) {
-            for (let j = 0; j < board[0].length; j++) {
-                const cell: Cell = board[i][j];
-                if (cell.type === 'card' && cell.isPlayed === false) {
-                    cell.isPlayed = true;
-                    cell.areCandidatesVisible = Array(4).fill(null).map(() => false);
-                }
-                revealedBoard[i][j] = cell;
-            }
-        }
-        return revealedBoard;
-    }
-
-    /**
-     * Handle the click of a Card
-     * @param index
-     * @returns 
-     */
-    const handleCardClick = (index: number): void => {
-        if (gameState !== 'playing') {
-            setMessage({ type: 'warning', text: 'Start the game before or wait till the level is loaded!' });
-            return;
-        }
-
-        const row: number = Math.floor(index / cols);
-        const col: number = index % cols;
-        const el: Cell = board[row][col];
-
-        if (el.type !== 'card') return;
-        if (el.type === 'card' && el.isPlayed === true) {
-            setMessage({ type: 'warning', text: 'Card already pressed!' });
-            return;
-        }
-
-        if (el.value === 0) {
-            setMessage({ type: 'error', text: 'You lost!' });
-            setLevelScore(0);
-            //setGameScore(0)?
-
-            if (levelScore === 0) levelTracker.current = 0;
-            else levelTracker.current = Math.max(0, levelTracker.current - 1)
-
-            setGameState('game-over');
-            const newBoard: Cell[][] = revealCompleteBoard();
-            setBoard(newBoard);
-            return;
-        }
-
-        setMessage({ type: 'log', text: `You found a ${el.value}` })
-        setLevelScore(previous => {
-            if (previous === 0) return el.value;
-            return previous * el.value;
-        })
-        const newLevelinfo: LevelData = updateLevelData(el.value);
-        setLevelInfo(newLevelinfo);
-
-        const newBoard: Cell[][] = updateBoardWithFlippedCell(board, row, col);
-        setBoard(newBoard);
-
-        if (newLevelinfo.TWO === 0 && newLevelinfo.THREE === 0) {
-            setMessage({ type: 'success', text: 'You found every 2 and 3, YOU WON! Click Start for the next level' });
-            setGameState('level-advancing');
-            setTimeout(() => {
-                const newBoard: Cell[][] = revealCompleteBoard();
-                setBoard(newBoard);
-                const totalLevelScore: number = gameScore + (levelScore * el.value);
-                setGameScore(totalLevelScore);
-                setLevelScore(0);
-
-                if (totalLevelScore > recordScore) {
-                    setRecordScore(totalLevelScore);
-                    saveRecordScore(totalLevelScore);
-                }
-
-                levelTracker.current += 1;
-            }, 500);
-        }
-    }
-
-    /**
-     * Changes the currently visible tab of the menu
-     * @param index 
-     */
-    const handleTabClick = (index: number): void => {
-        setActiveTabIndex(index)
-    }
-
-    /**
-     * Make the game start
-     * @param level 
-     */
-    const handleStartGame = (): void => {
-        console.log('Starting with level:', levelTracker);
-        setLevel(levelTracker.current);
-        setLevelScore(0);
-        setGameState('starting');
-        setMessage({ type: 'log', text: 'Starting Game!' });
-
-        console.log('Matrix creation');
-        const boardShuffler = new Board();
-        const [levelData, matrix] = boardShuffler.generateBoard(levelTracker.current);
-        setTimeout(() => {
-            setLevelInfo(levelData);
-            setBoard(matrix);
-            setGameState('playing');
-            setMessage({ type: 'log', text: 'Game has started. Choose your first cell!' });
-        }, 600);
-    }
-
-    /**
-     * Chesk if `actualGameState` is equal to one of the specified states inside `allowedStates`
-     * @param actualGameState Current state of the game
-     * @param allowedStates Possible states you want the `actualGameState` to be in
-     * @returns 
-     */
-    const checkState = (actualGameState: GameState, allowedStates: GameState[]): boolean => {
-        let check = false;
-        allowedStates.forEach((state) => {
-            if (actualGameState === state) check = true;
-        });
-        return check;
-    }
-
-    /**
-     * Return the correct css class name for the Counter at the specified `row` and `col`
-     * @param row 
-     * @param col 
-     * @returns 
-     */
-    const getCounterCardBackgroundColor = (row: number, col: number): string => {
-        let value: number = 0;
-        if (col === Board.BOARD_COLS) value = row;
-        else value = col;
-        switch (value) {
-            case 0:
-                return 'red'
-            case 1:
-                return 'green'
-            case 2:
-                return 'yellow'
-            case 3:
-                return 'blue'
-            case 4:
-                return 'purple'
-            default:
-                return '';
-        }
-    }
-    const handleContextMenu = (e: React.MouseEvent, rowIndex: number, colIndex: number) => {
-        e.preventDefault();
-        setIsContextMenuVisible(true);
-        const target = e.currentTarget.getBoundingClientRect();
-        console.log(target);
-        const position: Position = {
-            x: target.left + (target.width * 1.1),
-            y: target.top + (target.height * 0.7),
-            row: rowIndex,
-            column: colIndex
-        };
-        console.log('Right click', position);
-        setContextMenuPosition(position)
-    };
-
     return (
         <>
             <Header />
@@ -363,79 +149,41 @@ function App() {
                         updateBoardToShowCandidate={updateBoardToShowCandidate}
                         board={board}
                         setBoard={setBoard}
-                    ></CandidatesContextMenu>
+                    />
                 }
-                <div className='gameboard'>
-                    <div className={`playgrid ${checkState(gameState, ['idle', 'starting', 'level-advancing', 'game-over']) ? 'inactive' : ''}`}>
-                        {board.map((row: Cell[], i: number) =>
-                            row.map((el: Cell, j: number) => {
-                                switch (el.type) {
-                                    case 'card':
-                                        return (
-                                            <div
-                                                key={j + i * cols}
-                                                className={`playgrid-element ${el.isPlayed ? 'clicked' : 'clickable'} ${isContextMenuVisible && contextMenuPosition.row === i && contextMenuPosition.column === j ? 'right-clicked' : ''}`}
-                                                onClick={() => handleCardClick(j + i * cols)}
-                                                onContextMenu={(e) => handleContextMenu(e, i, j)}
-                                            >
-                                                {el.isPlayed ? el.value : '?'}
-                                                {el.areCandidatesVisible[0] && <div className='candidates-container top-left'>0</div>}
-                                                {el.areCandidatesVisible[1] && <div className='candidates-container top-right'>1</div>}
-                                                {el.areCandidatesVisible[2] && <div className='candidates-container bottom-left'>2</div>}
-                                                {el.areCandidatesVisible[3] && <div className='candidates-container bottom-right'>3</div>}
-
-                                            </div>);
-                                    case 'counter':
-                                        return (<div key={j + i * cols} className={`playgrid-element ${getCounterCardBackgroundColor(i, j)}`}>{`${el.bomb_value}, ${el.count_value}`}</div>);
-                                    default:
-                                        return (<div key={j + i * cols} className='playgrid-element'>{j + i * cols}</div>);
-                                }
-                            })
-                        )}
-                    </div>
-                </div>
-                <div className='menu'>
-                    <div className='playmenu'>
-                        <div className='current-score'>
-                            <h1 className='current-score-title'>Current score: {gameScore}</h1>
-                        </div>
-                        <div className='record-score'>
-                            <h2>Record high: {recordScore}</h2>
-                        </div>
-                        <div className='tab-holder'>
-                            <div className='tab-container'>
-                                <ul className='tabs'>
-                                    <li className={`tab ${activeTabIndex === 0 ? 'active' : ''}`} onClick={() => handleTabClick(0)}>Game stats</li>
-                                    <li className={`tab ${activeTabIndex === 1 ? 'active' : ''}`} onClick={() => handleTabClick(1)}>How to play</li>
-                                </ul>
-                            </div>
-                            <div className='tab-content'>
-                                <div className={`tab-pane ${activeTabIndex === 0 ? 'active' : ''}`}>
-                                    <h3 className='current-level-title'>Level: {level + 1}</h3>
-                                    <h3 className='current-level-score-title'>Level score: {levelScore}</h3>
-                                    <h3 className={message.type}>{message.text}</h3>
-                                </div>
-                                <div className={`tab-pane ${activeTabIndex === 1 ? 'active' : ''}`}>
-                                    <p className='game-description'>
-                                        • Your goal is to find all 3's and 2's hidden in the grid.<br></br>
-                                        • The last column and the last row shows how many 0's there are in the related column/row and the total sum of the numers contained.<br></br>
-                                        • If you find them all, you will win the level and proceed to the next one.<br></br>
-                                        • Finding any 0 will make you lose the game right away.
-                                    </p>
-                                </div>
-                            </div>
-                        </div>
-                        <div className='button-container'>
-                            <button 
-                                className={gameState === 'playing' ? 'not-allowed' : ''}
-                                disabled={gameState === 'playing' ? true : false}
-                                onClick={handleStartGame}
-                            >
-                                Start
-                            </button>
-                        </div>
-                    </div>
-                </div>
+                <Gameboard 
+                    setLevelScore={setLevelScore}
+                    setGameScore={setGameScore}
+                    setRecordScore={setRecordScore}
+                    setGameState={setGameState}
+                    setMessage={setMessage}
+                    setLevelInfo={setLevelInfo}
+                    setIsContextMenuVisible={setIsContextMenuVisible}
+                    setContextMenuPosition={setContextMenuPosition}
+                    setBoard={setBoard}
+                    board={board}
+                    gameState={gameState}
+                    levelTracker={levelTracker}
+                    levelInfo={levelInfo}
+                    levelScore={levelScore}
+                    gameScore={gameScore}
+                    recordScore={recordScore}
+                    isContextMenuVisible={isContextMenuVisible}
+                    contextMenuPosition={contextMenuPosition}
+                />
+                <Menu 
+                    setLevelScore={setLevelScore}
+                    setGameState={setGameState}
+                    setMessage={setMessage}
+                    setLevelInfo={setLevelInfo}
+                    setBoard={setBoard}
+                    gameState={gameState}
+                    levelTracker={levelTracker}
+                    levelScore={levelScore}
+                    gameScore={gameScore}
+                    recordScore={recordScore}
+                    message={message}
+                />
             </div>
         </>
     );

@@ -1,4 +1,5 @@
 import { createContext, useState } from "react";
+
 import { type ThemeContextType, type Theme } from "../types/gameTypes";
 
 export const ThemeContext = createContext<ThemeContextType>({

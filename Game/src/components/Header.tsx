@@ -1,7 +1,10 @@
 import { useContext, useState } from 'react';
-import '../styles/Header.css'
-import { ThemeContext } from './ThemeContext';
+
 import type { ThemeContextType } from '../types/gameTypes';
+
+import { ThemeContext } from './ThemeContext';
+
+import '../styles/Header.css'
 
 function Header() {
     const [checked, setChecked] = useState<boolean>(true);

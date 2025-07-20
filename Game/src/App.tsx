@@ -67,11 +67,10 @@ function App() {
             { type: 'counter', bomb_value: 0, count_value: 0 },
         ]
     ]);
-    const [levelInfo, setLevelInfo] = useState<LevelData>({ difficulty: 'easy', ZERO: 0, TWO: 0, THREE: 0 });
+    const [levelInfo, setLevelInfo] = useState<LevelData>({ difficulty: 'easy', values: [] });
     const [levelScore, setLevelScore] = useState<number>(0);
     const [gameScore, setGameScore] = useState<number>(0);
     const [recordScore, setRecordScore] = useState<number>(0);
-    const [level, setLevel] = useState<number>(0);
     const [message, setMessage] = useState<Message>({ type: 'warning', text: 'Press Start!' });
     const [isContextMenuVisible, setIsContextMenuVisible] = useState<boolean>(false);
     const [contextMenuPosition, setContextMenuPosition] = useState<Position>({ x: 0, y: 0, row: 0, column: 0 });

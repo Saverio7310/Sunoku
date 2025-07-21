@@ -1,4 +1,4 @@
-import type { Cell, LevelData } from "../types/gameTypes";
+import type { Card, Cell, Counter, LevelData } from "../types/gameTypes";
 
 export class Board {
     static BOARD_ROWS: number = 5;
@@ -117,5 +117,29 @@ export class Board {
         
         const matrix: Cell[][] = this.createCellMatrixFromNumericList(elements);
         return [{ difficulty: Board.levelsData[level].difficulty, values: [ ...Board.levelsData[level].values ] }, matrix];
+    }
+
+    generateEmptyBoard(): Cell[][] {
+        const card: Card = {
+            type: "card",
+            value: 0,
+            isPlayed: false,
+            areCandidatesVisible: Array(4).fill(false),
+        };
+        const counter: Counter = {
+            type: 'counter',
+            bomb_value: 0,
+            count_value: 0,
+        };
+        const row: Cell[] = Array(6).fill(null).map((_, index) => {
+            if (index <= 4) return card;
+            return counter;
+        })
+        const finalRow: Counter[] = Array(6).fill(counter);
+        const board: Cell[][] = Array(6).fill(null).map((_, index) => {
+            if (index <= 4) return row;
+            return finalRow;
+        });
+        return board;
     }
 }

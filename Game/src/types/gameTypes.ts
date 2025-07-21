@@ -1,8 +1,8 @@
 export type Theme = 'dark' | 'light';
 
 export type ThemeContextType = {
-  theme: Theme;
-  switchTheme: () => void;
+    theme: Theme;
+    switchTheme: () => void;
 };
 
 export type GameState = 'idle' | 'starting' | 'playing' | 'level-advancing' | 'game-over';
@@ -49,3 +49,9 @@ export type Position = {
     row: number,
     column: number
 }
+
+export type BoardReducerAction =
+    | { type: 'CREATE_BOARD', board: Cell[][] }
+    | { type: 'PLAY_CARD', rowIndex: number, colIndex: number }
+    | { type: 'SHOW_CANDIDATE', rowIndex: number, colIndex: number, candidateIndex: number }
+    | { type: 'REVEAL_BOARD' };

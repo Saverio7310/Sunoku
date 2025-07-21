@@ -1,6 +1,6 @@
-import { useContext, useEffect, useRef, useState } from 'react';
+import { useContext, useEffect, useReducer, useRef, useState } from 'react';
 
-import { type LevelData, type Cell, type GameState, type Message, type RecordScore, type Position, type ThemeContextType } from './types/gameTypes';
+import { type LevelData, type Cell, type GameState, type Message, type RecordScore, type Position, type ThemeContextType, type Card } from './types/gameTypes';
 
 import Header from './components/Header';
 import Gameboard from './components/Gameboard';
@@ -14,59 +14,70 @@ import './styles/board.css'
 import './styles/menu.css'
 
 import { retrieveRecordScore } from './utils/localStorage';
+import { Board } from './model/Board';
+
+type BoardAction =
+    | { type: 'CREATE_BOARD', board: Cell[][] }
+    | { type: 'PLAY_CARD', rowIndex: number, colIndex: number }
+    | { type: 'SHOW_CANDIDATE', rowIndex: number, colIndex: number, candidateIndex: number }
+    | { type: 'REVEAL_BOARD' };
+
+const boardReducer = (board: Cell[][], action: BoardAction): Cell[][] => {
+    switch (action.type) {
+        case 'CREATE_BOARD': {
+            return action.board;
+        }
+        case 'PLAY_CARD': {
+            return board.map((row, i) => {
+                return row.map((cell, j) => {
+                    if (cell.type === 'card' && cell.isPlayed === false && i === action.rowIndex && j === action.colIndex) {
+                        let newCell: Card = {
+                            ...cell,
+                            isPlayed: true,
+                            areCandidatesVisible: Array(4).fill(null).map(() => false)
+                        };
+                        return newCell;
+                    } return cell;
+                });
+            });
+        }
+        case 'SHOW_CANDIDATE': {
+            return board.map((row, i) => {
+                return row.map((cell, j) => {
+                    if (cell.type === 'card' && cell.isPlayed === false && i === action.rowIndex && j === action.colIndex) {
+                        const newCell: Card = { ...cell, areCandidatesVisible: [...cell.areCandidatesVisible] };
+                        newCell.areCandidatesVisible[action.candidateIndex] = !newCell.areCandidatesVisible[action.candidateIndex];
+                        return newCell;
+                    } else return cell;
+                });
+            });
+        }
+        case 'REVEAL_BOARD': {
+            return board.map(row => {
+                return row.map(cell => {
+                    if (cell.type === 'card' && cell.isPlayed === false) {
+                        let newCell: Card = {
+                            ...cell,
+                            isPlayed: true,
+                            areCandidatesVisible: Array(4).fill(null).map(() => false)
+                        };
+                        return newCell;
+                    } else return cell;
+                });
+            });
+        }
+        default:
+            return board;
+    }
+}
+
+const getInitialBoard = (): Cell[][] => {
+    return new Board().generateEmptyBoard();
+}
 
 function App() {
     const [gameState, setGameState] = useState<GameState>('idle');
-    const [board, setBoard] = useState<Cell[][]>([
-        [
-            { type: 'card', value: 0, isPlayed: false, areCandidatesVisible: [false, false, false, false] },
-            { type: 'card', value: 1, isPlayed: false, areCandidatesVisible: [false, false, false, false] },
-            { type: 'card', value: 1, isPlayed: false, areCandidatesVisible: [false, false, false, false] },
-            { type: 'card', value: 2, isPlayed: false, areCandidatesVisible: [false, false, false, false] },
-            { type: 'card', value: 3, isPlayed: false, areCandidatesVisible: [false, false, false, false] },
-            { type: 'counter', bomb_value: 9, count_value: 9 }
-        ],
-        [
-            { type: 'card', value: 2, isPlayed: false, areCandidatesVisible: [false, false, false, false] },
-            { type: 'card', value: 0, isPlayed: false, areCandidatesVisible: [false, false, false, false] },
-            { type: 'card', value: 0, isPlayed: false, areCandidatesVisible: [false, false, false, false] },
-            { type: 'card', value: 1, isPlayed: false, areCandidatesVisible: [false, false, false, false] },
-            { type: 'card', value: 1, isPlayed: false, areCandidatesVisible: [false, false, false, false] },
-            { type: 'counter', bomb_value: 9, count_value: 9 }
-        ],
-        [
-            { type: 'card', value: 1, isPlayed: false, areCandidatesVisible: [false, false, false, false] },
-            { type: 'card', value: 1, isPlayed: false, areCandidatesVisible: [false, false, false, false] },
-            { type: 'card', value: 1, isPlayed: false, areCandidatesVisible: [false, false, false, false] },
-            { type: 'card', value: 1, isPlayed: false, areCandidatesVisible: [false, false, false, false] },
-            { type: 'card', value: 1, isPlayed: false, areCandidatesVisible: [false, false, false, false] },
-            { type: 'counter', bomb_value: 9, count_value: 9 }
-        ],
-        [
-            { type: 'card', value: 1, isPlayed: false, areCandidatesVisible: [false, false, false, false] },
-            { type: 'card', value: 0, isPlayed: false, areCandidatesVisible: [false, false, false, false] },
-            { type: 'card', value: 3, isPlayed: false, areCandidatesVisible: [false, false, false, false] },
-            { type: 'card', value: 2, isPlayed: false, areCandidatesVisible: [false, false, false, false] },
-            { type: 'card', value: 0, isPlayed: false, areCandidatesVisible: [false, false, false, false] },
-            { type: 'counter', bomb_value: 9, count_value: 9 }
-        ],
-        [
-            { type: 'card', value: 3, isPlayed: false, areCandidatesVisible: [false, false, false, false] },
-            { type: 'card', value: 1, isPlayed: false, areCandidatesVisible: [false, false, false, false] },
-            { type: 'card', value: 1, isPlayed: false, areCandidatesVisible: [false, false, false, false] },
-            { type: 'card', value: 1, isPlayed: false, areCandidatesVisible: [false, false, false, false] },
-            { type: 'card', value: 1, isPlayed: false, areCandidatesVisible: [false, false, false, false] },
-            { type: 'counter', bomb_value: 9, count_value: 9 }
-        ],
-        [
-            { type: 'counter', bomb_value: 9, count_value: 9 },
-            { type: 'counter', bomb_value: 9, count_value: 9 },
-            { type: 'counter', bomb_value: 9, count_value: 9 },
-            { type: 'counter', bomb_value: 9, count_value: 9 },
-            { type: 'counter', bomb_value: 9, count_value: 9 },
-            { type: 'counter', bomb_value: 0, count_value: 0 },
-        ]
-    ]);
+    const [board, dispatch] = useReducer(boardReducer, null, getInitialBoard);
     const [levelInfo, setLevelInfo] = useState<LevelData>({ difficulty: 'easy', values: [] });
     const [levelScore, setLevelScore] = useState<number>(0);
     const [gameScore, setGameScore] = useState<number>(0);
@@ -111,6 +122,22 @@ function App() {
 
     console.log('Rendering App!', theme);
 
+
+    const createBoard = (board: Cell[][]): void => {
+        dispatch({
+            type: 'CREATE_BOARD',
+            board: board
+        });
+    }
+
+    const flipCardOnTheBoard = (rowIndex: number, colIndex: number): void => {
+        dispatch({
+            type: 'PLAY_CARD',
+            rowIndex: rowIndex,
+            colIndex: colIndex
+        });
+    }
+
     /**
      * Show the Candidate (0, 1, 2, 3) for the Card at the specified `rowIndex` and `colIndex`
      * @param board 
@@ -119,20 +146,19 @@ function App() {
      * @param candidateIndex [0 - 3]
      * @returns 
      */
-    const updateBoardToShowCandidate = (board: Cell[][], rowIndex: number, colIndex: number, candidateIndex: number): Cell[][] => {
-        const newBoard: Cell[][] = Array(board.length).fill(null).map(() => []);
-        for (let i = 0; i < board.length; i++) {
-            for (let j = 0; j < board[0].length; j++) {
-                const cell: Cell = board[i][j];
-                if (cell.type === 'card' && cell.isPlayed === false && i === rowIndex && j === colIndex) {
-                    cell.areCandidatesVisible.forEach((visibility, index) => {
-                        if (index === candidateIndex) cell.areCandidatesVisible[index] = !visibility;
-                    });
-                }
-                newBoard[i][j] = cell;
-            }
-        }
-        return newBoard;
+    const showCandidateOnTheBoard = (rowIndex: number, colIndex: number, candidateIndex: number): void => {
+        dispatch({
+            type: 'SHOW_CANDIDATE',
+            candidateIndex: candidateIndex,
+            colIndex: colIndex,
+            rowIndex: rowIndex
+        });
+    }
+
+    const revealBoard = (): void => {
+        dispatch({
+            type: 'REVEAL_BOARD'
+        });
     }
 
     return (
@@ -145,12 +171,11 @@ function App() {
                         ref={contectMenuRef}
                         setIsContextMenuVisible={setIsContextMenuVisible}
                         position={contextMenuPosition}
-                        updateBoardToShowCandidate={updateBoardToShowCandidate}
+                        showCandidateOnTheBoard={showCandidateOnTheBoard}
                         board={board}
-                        setBoard={setBoard}
                     />
                 }
-                <Gameboard 
+                <Gameboard
                     setLevelScore={setLevelScore}
                     setGameScore={setGameScore}
                     setRecordScore={setRecordScore}
@@ -159,7 +184,8 @@ function App() {
                     setLevelInfo={setLevelInfo}
                     setIsContextMenuVisible={setIsContextMenuVisible}
                     setContextMenuPosition={setContextMenuPosition}
-                    setBoard={setBoard}
+                    flipCardOnTheBoard={flipCardOnTheBoard}
+                    revealBoard={revealBoard}
                     board={board}
                     gameState={gameState}
                     levelTracker={levelTracker}
@@ -170,12 +196,12 @@ function App() {
                     isContextMenuVisible={isContextMenuVisible}
                     contextMenuPosition={contextMenuPosition}
                 />
-                <Menu 
+                <Menu
                     setLevelScore={setLevelScore}
                     setGameState={setGameState}
                     setMessage={setMessage}
                     setLevelInfo={setLevelInfo}
-                    setBoard={setBoard}
+                    createBoard={createBoard}
                     gameState={gameState}
                     levelTracker={levelTracker}
                     levelScore={levelScore}

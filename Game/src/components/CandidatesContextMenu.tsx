@@ -5,27 +5,23 @@ type CandidatesContextMenuProps = {
     ref: React.RefObject<HTMLDivElement | null>,
     setIsContextMenuVisible: React.Dispatch<React.SetStateAction<boolean>>,
     position: Position,
-    updateBoardToShowCandidate: (board: Cell[][], rowIndex: number, colIndex: number, candidateIndex: number) => Cell[][],
+    showCandidateOnTheBoard: (rowIndex: number, colIndex: number, candidateIndex: number) => void,
     board: Cell[][],
-    setBoard: React.Dispatch<React.SetStateAction<Cell[][]>>,
 }
 
 function CandidatesContextMenu({
         ref,
         setIsContextMenuVisible, 
         position, 
-        updateBoardToShowCandidate, 
+        showCandidateOnTheBoard, 
         board,
-        setBoard
     }: CandidatesContextMenuProps) {
 
     const candidates: number[] = [0,1,2,3];
     const candidatesToggled = (board[position.row][position.column] as Card).areCandidatesVisible;
 
     const handleCandidateClick = (candidate: number): void => {
-        console.log(candidate);
-        const newBoard: Cell[][] = updateBoardToShowCandidate(board, position.row, position.column, candidate);
-        setBoard(newBoard);
+        showCandidateOnTheBoard(position.row, position.column, candidate);
     }
     
     const closeContextMenu = () => {

@@ -12,7 +12,8 @@ type GameboardProps = {
     setLevelInfo: React.Dispatch<React.SetStateAction<LevelData>>,
     setIsContextMenuVisible: React.Dispatch<React.SetStateAction<boolean>>,
     setContextMenuPosition: React.Dispatch<React.SetStateAction<Position>>,
-    setBoard: React.Dispatch<React.SetStateAction<Cell[][]>>,
+    flipCardOnTheBoard: (rowIndex: number, colIndex: number) => void,
+    revealBoard: () => void,
     board: Cell[][],
     gameState: GameState,
     levelTracker: React.RefObject<number>,
@@ -34,7 +35,8 @@ function Gameboard({
         setLevelInfo,
         setIsContextMenuVisible,
         setContextMenuPosition,
-        setBoard,
+        flipCardOnTheBoard,
+        revealBoard,
         board,
         gameState,
         levelTracker,
@@ -85,14 +87,12 @@ function Gameboard({
         if (el.value === 0) {
             setMessage({ type: 'error', text: 'You lost!' });
             setLevelScore(0);
-            //setGameScore(0)?
 
             if (levelScore === 0) levelTracker.current = 0;
             else levelTracker.current = Math.max(0, levelTracker.current - 1)
 
             setGameState('game-over');
-            const newBoard: Cell[][] = revealCompleteBoard();
-            setBoard(newBoard);
+            revealBoard();
             return;
         }
 
@@ -104,15 +104,13 @@ function Gameboard({
         const newLevelinfo: LevelData = updateLevelData(el.value);
         setLevelInfo(newLevelinfo);
 
-        const newBoard: Cell[][] = updateBoardWithFlippedCell(board, row, col);
-        setBoard(newBoard);
+        flipCardOnTheBoard(row, col);
 
         if (newLevelinfo.values[2] === 0 && newLevelinfo.values[3] === 0) {
             setMessage({ type: 'success', text: 'You found every 2 and 3, YOU WON! Click Start for the next level' });
             setGameState('level-advancing');
             setTimeout(() => {
-                const newBoard: Cell[][] = revealCompleteBoard();
-                setBoard(newBoard);
+                revealBoard();
                 const totalLevelScore: number = gameScore + (levelScore * el.value);
                 setGameScore(totalLevelScore);
                 setLevelScore(0);
@@ -125,47 +123,6 @@ function Gameboard({
                 levelTracker.current += 1;
             }, 500);
         }
-    }
-
-    /**
-     * Reveal the entire board
-     * @returns 
-     */
-    const revealCompleteBoard = (): Cell[][] => {
-        const revealedBoard: Cell[][] = Array(board.length).fill(null).map(() => []);
-        for (let i = 0; i < board.length; i++) {
-            for (let j = 0; j < board[0].length; j++) {
-                const cell: Cell = board[i][j];
-                if (cell.type === 'card' && cell.isPlayed === false) {
-                    cell.isPlayed = true;
-                    cell.areCandidatesVisible = Array(4).fill(null).map(() => false);
-                }
-                revealedBoard[i][j] = cell;
-            }
-        }
-        return revealedBoard;
-    }
-
-    /**
-     * Flip the Card at the specified `rowIndex` and `colIndex` by setting its `isPlayed` property to true
-     * @param board 
-     * @param rowIndex 
-     * @param colIndex 
-     * @returns 
-     */
-    const updateBoardWithFlippedCell = (board: Cell[][], rowIndex: number, colIndex: number): Cell[][] => {
-        const newBoard: Cell[][] = Array(board.length).fill(null).map(() => []);
-        for (let i = 0; i < board.length; i++) {
-            for (let j = 0; j < board[0].length; j++) {
-                const cell: Cell = board[i][j];
-                if (cell.type === 'card' && cell.isPlayed === false && i === rowIndex && j === colIndex) {
-                    cell.isPlayed = true;
-                    cell.areCandidatesVisible = Array(4).fill(null).map(() => false);
-                }
-                newBoard[i][j] = cell;
-            }
-        }
-        return newBoard;
     }
 
     /**

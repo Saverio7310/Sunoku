@@ -1,6 +1,6 @@
 import { useContext, useEffect, useReducer, useRef, useState } from 'react';
 
-import { type LevelData, type Cell, type GameState, type Message, type RecordScore, type Position, type ThemeContextType, type Card } from './types/gameTypes';
+import type { LevelData, Cell, GameState, Message, RecordScore, Position, ThemeContextType } from './types/gameTypes';
 
 import Header from './components/Header';
 import Gameboard from './components/Gameboard';
@@ -15,59 +15,7 @@ import './styles/menu.css'
 
 import { retrieveRecordScore } from './utils/localStorage';
 import { Board } from './model/Board';
-
-type BoardAction =
-    | { type: 'CREATE_BOARD', board: Cell[][] }
-    | { type: 'PLAY_CARD', rowIndex: number, colIndex: number }
-    | { type: 'SHOW_CANDIDATE', rowIndex: number, colIndex: number, candidateIndex: number }
-    | { type: 'REVEAL_BOARD' };
-
-const boardReducer = (board: Cell[][], action: BoardAction): Cell[][] => {
-    switch (action.type) {
-        case 'CREATE_BOARD': {
-            return action.board;
-        }
-        case 'PLAY_CARD': {
-            return flipCard(board, action.rowIndex, action.colIndex);
-        }
-        case 'SHOW_CANDIDATE': {
-            return showCandidate(board, action.rowIndex, action.colIndex, action.candidateIndex);
-        }
-        case 'REVEAL_BOARD': {
-            return flipCard(board);
-        }
-        default:
-            return board;
-    }
-}
-
-const flipCard = (board: Cell[][], rowIndex: number | null = null, colIndex: number | null = null): Cell[][] => {
-    return board.map((row, i) => {
-        return row.map((cell, j) => {
-            const isTargetCell = (rowIndex === null && colIndex === null) || (i === rowIndex && j === colIndex);
-            if (cell.type === 'card' && cell.isPlayed === false && isTargetCell) {
-                let newCell: Card = {
-                    ...cell,
-                    isPlayed: true,
-                    areCandidatesVisible: Array(4).fill(null).map(() => false)
-                };
-                return newCell;
-            } return cell;
-        });
-    });
-}
-
-const showCandidate = (board: Cell[][], rowIndex: number, colIndex: number, candidateIndex: number): Cell[][] => {
-    return board.map((row, i) => {
-        return row.map((cell, j) => {
-            if (cell.type === 'card' && cell.isPlayed === false && i === rowIndex && j === colIndex) {
-                const newCell: Card = { ...cell, areCandidatesVisible: [...cell.areCandidatesVisible] };
-                newCell.areCandidatesVisible[candidateIndex] = !newCell.areCandidatesVisible[candidateIndex];
-                return newCell;
-            } else return cell;
-        });
-    });
-}
+import boardReducer from './model/boardReducer';
 
 const getInitialBoard = (): Cell[][] => {
     return new Board().generateEmptyBoard();
@@ -84,7 +32,7 @@ function App() {
     const [isContextMenuVisible, setIsContextMenuVisible] = useState<boolean>(false);
     const [contextMenuPosition, setContextMenuPosition] = useState<Position>({ x: 0, y: 0, row: 0, column: 0 });
 
-    const contectMenuRef = useRef<HTMLDivElement>(null);
+    const contextMenuRef = useRef<HTMLDivElement>(null);
     const levelTracker = useRef<number>(0);
 
     const { theme } = useContext<ThemeContextType>(ThemeContext);
@@ -103,7 +51,7 @@ function App() {
      */
     useEffect(() => {
         const handleMouseClick = (event: MouseEvent): void => {
-            if (contectMenuRef && !contectMenuRef.current?.contains(event.target as Node)) {
+            if (contextMenuRef && !contextMenuRef.current?.contains(event.target as Node)) {
                 setIsContextMenuVisible(false);
             }
         }
@@ -166,7 +114,7 @@ function App() {
                 {
                     (isContextMenuVisible && gameState === 'playing') &&
                     <CandidatesContextMenu
-                        ref={contectMenuRef}
+                        ref={contextMenuRef}
                         setIsContextMenuVisible={setIsContextMenuVisible}
                         position={contextMenuPosition}
                         showCandidateOnTheBoard={showCandidateOnTheBoard}

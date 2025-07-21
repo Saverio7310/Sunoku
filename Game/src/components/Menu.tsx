@@ -9,7 +9,7 @@ type MenuProps = {
     setGameState: React.Dispatch<React.SetStateAction<GameState>>,
     setMessage: React.Dispatch<React.SetStateAction<Message>>,
     setLevelInfo: React.Dispatch<React.SetStateAction<LevelData>>,
-    setBoard: React.Dispatch<React.SetStateAction<Cell[][]>>,
+    createBoard: (board: Cell[][]) => void,
     gameState: GameState,
     levelTracker: React.RefObject<number>,
     levelScore: number,
@@ -23,7 +23,7 @@ function Menu({
         setGameState,
         setMessage,
         setLevelInfo,
-        setBoard,
+        createBoard,
         gameState,
         levelTracker,
         levelScore,
@@ -58,7 +58,7 @@ function Menu({
         const [levelData, matrix] = boardShuffler.generateBoard(levelTracker.current);
         setTimeout(() => {
             setLevelInfo(levelData);
-            setBoard(matrix);
+            createBoard(matrix);
             setGameState('playing');
             setMessage({ type: 'log', text: 'Game has started. Choose your first cell!' });
         }, 600);

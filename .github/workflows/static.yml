@@ -35,9 +35,11 @@ jobs:
 
       - name: Install dependencies
         run: npm ci
+        working-directory: Game
 
       - name: Build the app
         run: npm run build
+        working-directory: Game
 
       - name: Setup Pages
         uses: actions/configure-pages@v5
@@ -45,7 +47,7 @@ jobs:
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
-          path: './dist'
+          path: 'Game/dist'
 
       - name: Deploy to GitHub Pages
         id: deployment

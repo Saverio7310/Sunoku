@@ -1,37 +1,36 @@
-import type { Card, Cell, Position } from "../types/gameTypes";
+import type { CandidatesContextMenuContextType, Card, Cell } from "../types/gameTypes";
 import '../styles/contextMenu.css'
+import { useContext } from "react";
+import { CandidatesContextMenuContext } from "./CandidatesContextMenuContext";
 
 type CandidatesContextMenuProps = {
     ref: React.RefObject<HTMLDivElement | null>,
-    setIsContextMenuVisible: React.Dispatch<React.SetStateAction<boolean>>,
-    position: Position,
     showCandidateOnTheBoard: (rowIndex: number, colIndex: number, candidateIndex: number) => void,
     board: Cell[][],
 }
 
 function CandidatesContextMenu({
         ref,
-        setIsContextMenuVisible, 
-        position, 
         showCandidateOnTheBoard, 
         board,
     }: CandidatesContextMenuProps) {
+        const { setContextMenuVisibility, contextMenuPosition } = useContext<CandidatesContextMenuContextType>(CandidatesContextMenuContext);
 
     const candidates: number[] = [0,1,2,3];
-    const candidatesToggled = (board[position.row][position.column] as Card).areCandidatesVisible;
+    const candidatesToggled = (board[contextMenuPosition.row][contextMenuPosition.column] as Card).areCandidatesVisible;
 
     const handleCandidateClick = (candidate: number): void => {
-        showCandidateOnTheBoard(position.row, position.column, candidate);
+        showCandidateOnTheBoard(contextMenuPosition.row, contextMenuPosition.column, candidate);
     }
     
     const closeContextMenu = () => {
-        setIsContextMenuVisible(false);
+        setContextMenuVisibility(false);
     }
     
     return (
         <div
             ref={ref}
-            style={{top: position.y, left: position.x}}
+            style={{top: contextMenuPosition.y, left: contextMenuPosition.x}}
             className="context-menu-container"
         >
             <div>

@@ -1,25 +1,39 @@
+import { useContext } from "react";
 import { Board } from "../model/Board";
-import type { Card, Position } from "../types/gameTypes";
+import type { CandidatesContextMenuContextType, Card, Position } from "../types/gameTypes";
+import { CandidatesContextMenuContext } from "./CandidatesContextMenuContext";
 
 type CardCellProps = {
     cell: Card,
     row: number,
     col: number,
-    isContextMenuVisible: boolean,
-    contextMenuPosition: Position,
     handleCardClick: (index: number) => void,
-    handleContextMenu: (e: React.MouseEvent, rowIndex: number, colIndex: number) => void
 }
 
 function CardCell({
-        cell,
-        row,
-        col,
-        isContextMenuVisible,
-        contextMenuPosition,
-        handleCardClick,
-        handleContextMenu
-    }: CardCellProps) {
+    cell,
+    row,
+    col,
+    handleCardClick,
+}: CardCellProps) {
+    const { isContextMenuVisible, setContextMenuVisibility, contextMenuPosition, setContextMenuNewPosition } = useContext<CandidatesContextMenuContextType>(CandidatesContextMenuContext);
+
+
+    const handleContextMenu = (e: React.MouseEvent, rowIndex: number, colIndex: number): void => {
+        e.preventDefault();
+        setContextMenuVisibility(true);
+        const target = e.currentTarget.getBoundingClientRect();
+        console.log(target);
+        const position: Position = {
+            x: target.left + (target.width * 1.1),
+            y: target.top + (target.height * 0.7),
+            row: rowIndex,
+            column: colIndex
+        };
+        console.log('Right click', position);
+        setContextMenuNewPosition(position)
+    };
+
     return (
         <div
             className={`playgrid-element ${cell.isPlayed ? 'clicked' : 'clickable'} ${isContextMenuVisible && contextMenuPosition.row === row && contextMenuPosition.column === col ? 'right-clicked' : ''}`}

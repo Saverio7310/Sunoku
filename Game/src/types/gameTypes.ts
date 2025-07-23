@@ -5,6 +5,13 @@ export type ThemeContextType = {
     switchTheme: () => void;
 };
 
+export type CandidatesContextMenuContextType = {
+    isContextMenuVisible: boolean,
+    setContextMenuVisibility: (isVisible: boolean) => void,
+    contextMenuPosition: Position,
+    setContextMenuNewPosition: (position: Position) => void,
+}
+
 export type GameState = 'idle' | 'starting' | 'playing' | 'level-advancing' | 'game-over';
 
 export type Card = {

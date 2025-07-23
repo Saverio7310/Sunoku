@@ -1,6 +1,6 @@
 import { useContext, useEffect, useReducer, useRef, useState } from 'react';
 
-import type { LevelData, Cell, GameState, Message, RecordScore, Position, ThemeContextType } from './types/gameTypes';
+import type { LevelData, Cell, GameState, Message, RecordScore, ThemeContextType, CandidatesContextMenuContextType } from './types/gameTypes';
 
 import Header from './components/Header';
 import Gameboard from './components/Gameboard';
@@ -16,6 +16,7 @@ import './styles/menu.css'
 import { retrieveRecordScore } from './utils/localStorage';
 import { Board } from './model/Board';
 import boardReducer from './model/boardReducer';
+import { CandidatesContextMenuContext } from './components/CandidatesContextMenuContext';
 
 const getInitialBoard = (): Cell[][] => {
     return new Board().generateEmptyBoard();
@@ -29,13 +30,12 @@ function App() {
     const [gameScore, setGameScore] = useState<number>(0);
     const [recordScore, setRecordScore] = useState<number>(0);
     const [message, setMessage] = useState<Message>({ type: 'warning', text: 'Press Start!' });
-    const [isContextMenuVisible, setIsContextMenuVisible] = useState<boolean>(false);
-    const [contextMenuPosition, setContextMenuPosition] = useState<Position>({ x: 0, y: 0, row: 0, column: 0 });
 
     const contextMenuRef = useRef<HTMLDivElement>(null);
     const levelTracker = useRef<number>(0);
 
     const { theme } = useContext<ThemeContextType>(ThemeContext);
+    const { isContextMenuVisible, setContextMenuVisibility } = useContext<CandidatesContextMenuContextType>(CandidatesContextMenuContext);
 
     /**
      * Check if this is correct []
@@ -52,7 +52,7 @@ function App() {
     useEffect(() => {
         const handleMouseClick = (event: MouseEvent): void => {
             if (contextMenuRef && !contextMenuRef.current?.contains(event.target as Node)) {
-                setIsContextMenuVisible(false);
+                setContextMenuVisibility(false);
             }
         }
 
@@ -115,8 +115,6 @@ function App() {
                     (isContextMenuVisible && gameState === 'playing') &&
                     <CandidatesContextMenu
                         ref={contextMenuRef}
-                        setIsContextMenuVisible={setIsContextMenuVisible}
-                        position={contextMenuPosition}
                         showCandidateOnTheBoard={showCandidateOnTheBoard}
                         board={board}
                     />
@@ -128,8 +126,6 @@ function App() {
                     setGameState={setGameState}
                     setMessage={setMessage}
                     setLevelInfo={setLevelInfo}
-                    setIsContextMenuVisible={setIsContextMenuVisible}
-                    setContextMenuPosition={setContextMenuPosition}
                     flipCardOnTheBoard={flipCardOnTheBoard}
                     revealBoard={revealBoard}
                     board={board}
@@ -139,8 +135,6 @@ function App() {
                     levelScore={levelScore}
                     gameScore={gameScore}
                     recordScore={recordScore}
-                    isContextMenuVisible={isContextMenuVisible}
-                    contextMenuPosition={contextMenuPosition}
                 />
                 <Menu
                     setLevelScore={setLevelScore}

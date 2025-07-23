@@ -1,4 +1,4 @@
-import type { Cell, GameState, LevelData, Message, Position } from "../types/gameTypes";
+import type { Cell, GameState, LevelData, Message } from "../types/gameTypes";
 
 import { Board } from "../model/Board";
 import { saveRecordScore } from "../utils/localStorage";
@@ -12,8 +12,6 @@ type GameboardProps = {
     setGameState: React.Dispatch<React.SetStateAction<GameState>>,
     setMessage: React.Dispatch<React.SetStateAction<Message>>,
     setLevelInfo: React.Dispatch<React.SetStateAction<LevelData>>,
-    setIsContextMenuVisible: React.Dispatch<React.SetStateAction<boolean>>,
-    setContextMenuPosition: React.Dispatch<React.SetStateAction<Position>>,
     flipCardOnTheBoard: (rowIndex: number, colIndex: number) => void,
     revealBoard: () => void,
     board: Cell[][],
@@ -23,9 +21,6 @@ type GameboardProps = {
     levelScore: number,
     gameScore: number,
     recordScore: number,
-    isContextMenuVisible: boolean,
-    contextMenuPosition: Position
-
 }
 
 function Gameboard({
@@ -35,8 +30,6 @@ function Gameboard({
         setGameState,
         setMessage,
         setLevelInfo,
-        setIsContextMenuVisible,
-        setContextMenuPosition,
         flipCardOnTheBoard,
         revealBoard,
         board,
@@ -46,8 +39,6 @@ function Gameboard({
         levelScore,
         gameScore,
         recordScore,
-        isContextMenuVisible,
-        contextMenuPosition
     }: GameboardProps) {
     const cols: number = Board.BOARD_COLS;
 
@@ -152,21 +143,6 @@ function Gameboard({
         return newLevelinfo;
     }
 
-    const handleContextMenu = (e: React.MouseEvent, rowIndex: number, colIndex: number): void => {
-        e.preventDefault();
-        setIsContextMenuVisible(true);
-        const target = e.currentTarget.getBoundingClientRect();
-        console.log(target);
-        const position: Position = {
-            x: target.left + (target.width * 1.1),
-            y: target.top + (target.height * 0.7),
-            row: rowIndex,
-            column: colIndex
-        };
-        console.log('Right click', position);
-        setContextMenuPosition(position)
-    };
-
     return (
         <div className='gameboard'>
             <div className={`playgrid ${checkState(gameState, ['idle', 'starting', 'level-advancing', 'game-over']) ? 'inactive' : ''}`}>
@@ -180,10 +156,7 @@ function Gameboard({
                                         cell={el}
                                         row={i}
                                         col={j}
-                                        isContextMenuVisible={isContextMenuVisible}
-                                        contextMenuPosition={contextMenuPosition}
                                         handleCardClick={handleCardClick}
-                                        handleContextMenu={handleContextMenu}
                                     />);
                             case 'counter':
                                 return (<CounterCell 

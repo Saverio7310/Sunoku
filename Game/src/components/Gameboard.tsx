@@ -2,6 +2,8 @@ import type { Cell, GameState, LevelData, Message, Position } from "../types/gam
 
 import { Board } from "../model/Board";
 import { saveRecordScore } from "../utils/localStorage";
+import CounterCell from "./CounterCell";
+import CardCell from "./CardCell";
 
 type GameboardProps = {
     setLevelScore: React.Dispatch<React.SetStateAction<number>>,
@@ -150,7 +152,7 @@ function Gameboard({
         return newLevelinfo;
     }
 
-    const handleContextMenu = (e: React.MouseEvent, rowIndex: number, colIndex: number) => {
+    const handleContextMenu = (e: React.MouseEvent, rowIndex: number, colIndex: number): void => {
         e.preventDefault();
         setIsContextMenuVisible(true);
         const target = e.currentTarget.getBoundingClientRect();
@@ -165,32 +167,6 @@ function Gameboard({
         setContextMenuPosition(position)
     };
 
-    /**
-     * Return the correct css class name for the Counter at the specified `row` and `col`
-     * @param row 
-     * @param col 
-     * @returns 
-     */
-    const getCounterCardBackgroundColor = (row: number, col: number): string => {
-        let value: number = 0;
-        if (col === Board.BOARD_COLS) value = row;
-        else value = col;
-        switch (value) {
-            case 0:
-                return 'red'
-            case 1:
-                return 'green'
-            case 2:
-                return 'yellow'
-            case 3:
-                return 'blue'
-            case 4:
-                return 'purple'
-            default:
-                return '';
-        }
-    }
-
     return (
         <div className='gameboard'>
             <div className={`playgrid ${checkState(gameState, ['idle', 'starting', 'level-advancing', 'game-over']) ? 'inactive' : ''}`}>
@@ -199,23 +175,24 @@ function Gameboard({
                         switch (el.type) {
                             case 'card':
                                 return (
-                                    <div
+                                    <CardCell
                                         key={j + i * cols}
-                                        className={`playgrid-element ${el.isPlayed ? 'clicked' : 'clickable'} ${isContextMenuVisible && contextMenuPosition.row === i && contextMenuPosition.column === j ? 'right-clicked' : ''}`}
-                                        onClick={() => handleCardClick(j + i * cols)}
-                                        onContextMenu={(e) => handleContextMenu(e, i, j)}
-                                    >
-                                        {el.isPlayed ? el.value : '?'}
-                                        {el.areCandidatesVisible[0] && <div className='candidates-container top-left'>0</div>}
-                                        {el.areCandidatesVisible[1] && <div className='candidates-container top-right'>1</div>}
-                                        {el.areCandidatesVisible[2] && <div className='candidates-container bottom-left'>2</div>}
-                                        {el.areCandidatesVisible[3] && <div className='candidates-container bottom-right'>3</div>}
-
-                                    </div>);
+                                        cell={el}
+                                        row={i}
+                                        col={j}
+                                        isContextMenuVisible={isContextMenuVisible}
+                                        contextMenuPosition={contextMenuPosition}
+                                        handleCardClick={handleCardClick}
+                                        handleContextMenu={handleContextMenu}
+                                    />);
                             case 'counter':
-                                return (<div key={j + i * cols} className={`playgrid-element ${getCounterCardBackgroundColor(i, j)}`}>{`${el.bomb_value}, ${el.count_value}`}</div>);
-                            default:
-                                return (<div key={j + i * cols} className='playgrid-element'>{j + i * cols}</div>);
+                                return (<CounterCell 
+                                            key={j + i * cols}
+                                            row={i}
+                                            col={j}
+                                            bomb_value={el.bomb_value}
+                                            count_value={el.count_value}
+                                        />);
                         }
                     })
                 )}

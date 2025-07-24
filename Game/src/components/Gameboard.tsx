@@ -1,4 +1,4 @@
-import type { Cell, GameState, LevelData, Message } from "../types/gameTypes";
+import type { Card, Cell, GameState, LevelData, Message } from "../types/gameTypes";
 
 import { Board } from "../model/Board";
 import { saveRecordScore } from "../utils/localStorage";
@@ -24,73 +24,72 @@ type GameboardProps = {
 }
 
 function Gameboard({
-        setLevelScore,
-        setGameScore,
-        setRecordScore,
-        setGameState,
-        setMessage,
-        setLevelInfo,
-        flipCardOnTheBoard,
-        revealBoard,
-        board,
-        gameState,
-        levelTracker,
-        levelInfo,
-        levelScore,
-        gameScore,
-        recordScore,
-    }: GameboardProps) {
+    setLevelScore,
+    setGameScore,
+    setRecordScore,
+    setGameState,
+    setMessage,
+    setLevelInfo,
+    flipCardOnTheBoard,
+    revealBoard,
+    board,
+    gameState,
+    levelTracker,
+    levelInfo,
+    levelScore,
+    gameScore,
+    recordScore,
+}: GameboardProps) {
     const cols: number = Board.BOARD_COLS;
 
-    /**
-     * Handle the click of a Card
-     * @param index
-     * @returns 
-     */
-    const handleCardClick = (index: number): void => {
-        if (gameState !== 'playing') {
-            setMessage({ type: 'warning', text: 'Start the game before or wait till the level is loaded!' });
-            return;
-        }
-
+    const getRowColumnAndCellAtIndex = (index: number): [row: number, col: number, cell: Cell] => {
         const row: number = Math.floor(index / cols);
         const col: number = index % cols;
-        const el: Cell = board[row][col];
+        return [row, col, board[row][col]];
+    }
 
-        if (el.type !== 'card') return;
-        if (el.type === 'card' && el.isPlayed === true) {
+    const isCardValid = (cell: Cell): boolean => {
+        if (cell.type !== 'card') return false;
+        if (cell.type === 'card' && cell.isPlayed === true) {
             setMessage({ type: 'warning', text: 'Card already pressed!' });
-            return;
+            return false;
         }
+        return true;
+    }
 
-        if (el.value === 0) {
-            setMessage({ type: 'error', text: 'You lost!' });
-            setLevelScore(0);
+    const handleLoss = (): void => {
+        setMessage({ type: 'error', text: 'You lost!' });
+        setLevelScore(0);
 
-            if (levelScore === 0) levelTracker.current = 0;
-            else levelTracker.current = Math.max(0, levelTracker.current - 1)
+        if (levelScore === 0) levelTracker.current = 0;
+        else levelTracker.current = Math.max(0, levelTracker.current - 1)
 
-            setGameState('game-over');
-            revealBoard();
-            return;
-        }
+        setGameState('game-over');
+        revealBoard();
+    }
 
-        setMessage({ type: 'log', text: `You found a ${el.value}` })
+    const handleCorrectCardFlipped = (card: Card, row: number, col: number): LevelData => {
+        setMessage({ type: 'log', text: `You found a ${card.value}` });
         setLevelScore(previous => {
-            if (previous === 0) return el.value;
-            return previous * el.value;
-        })
-        const newLevelinfo: LevelData = updateLevelData(el.value);
+            if (previous === 0) return card.value;
+            return previous * card.value;
+        });
+
+        const newLevelinfo: LevelData = updateLevelData(card.value);
         setLevelInfo(newLevelinfo);
 
         flipCardOnTheBoard(row, col);
 
+        return newLevelinfo;
+    }
+
+    const handleLevelCompletion = (newLevelinfo: LevelData, card: Card): void => {
         if (newLevelinfo.values[2] === 0 && newLevelinfo.values[3] === 0) {
             setMessage({ type: 'success', text: 'You found every 2 and 3, YOU WON! Click Start for the next level' });
             setGameState('level-advancing');
             setTimeout(() => {
                 revealBoard();
-                const totalLevelScore: number = gameScore + (levelScore * el.value);
+                const totalLevelScore: number = gameScore + (levelScore * card.value);
                 setGameScore(totalLevelScore);
                 setLevelScore(0);
 
@@ -102,6 +101,31 @@ function Gameboard({
                 levelTracker.current += 1;
             }, 500);
         }
+    }
+
+    /**
+     * Handle the click of a Card
+     * @param index
+     * @returns 
+     */
+    const handleCardClick = (index: number): void => {
+        if (gameState !== 'playing') {
+            return setMessage({ type: 'warning', text: 'Start the game before or wait till the level is loaded!' });
+        }
+
+        const [row, col, cell] = getRowColumnAndCellAtIndex(index);
+
+        if (!isCardValid(cell)) return;
+
+        const card: Card = cell as Card;
+
+        if (card.value === 0) {
+            return handleLoss();
+        }
+
+        const newLevelinfo: LevelData = handleCorrectCardFlipped(card, row, col);
+
+        handleLevelCompletion(newLevelinfo, card);
     }
 
     /**
@@ -133,25 +157,25 @@ function Gameboard({
         <div className='gameboard'>
             <div className='playgrid'>
                 {board.map((row: Cell[], i: number) =>
-                    row.map((el: Cell, j: number) => {
-                        switch (el.type) {
+                    row.map((cell: Cell, j: number) => {
+                        switch (cell.type) {
                             case 'card':
                                 return (
                                     <CardCell
                                         key={j + i * cols}
-                                        cell={el}
+                                        cell={cell}
                                         row={i}
                                         col={j}
                                         handleCardClick={handleCardClick}
                                     />);
                             case 'counter':
-                                return (<CounterCell 
-                                            key={j + i * cols}
-                                            row={i}
-                                            col={j}
-                                            bomb_value={el.bomb_value}
-                                            count_value={el.count_value}
-                                        />);
+                                return (<CounterCell
+                                    key={j + i * cols}
+                                    row={i}
+                                    col={j}
+                                    bomb_value={cell.bomb_value}
+                                    count_value={cell.count_value}
+                                />);
                         }
                     })
                 )}

@@ -43,20 +43,6 @@ function Gameboard({
     const cols: number = Board.BOARD_COLS;
 
     /**
-     * Chesk if `actualGameState` is equal to one of the specified states inside `allowedStates`
-     * @param actualGameState Current state of the game
-     * @param allowedStates Possible states you want the `actualGameState` to be in
-     * @returns 
-     */
-    const checkState = (actualGameState: GameState, allowedStates: GameState[]): boolean => {
-        let check = false;
-        allowedStates.forEach((state) => {
-            if (actualGameState === state) check = true;
-        });
-        return check;
-    }
-
-    /**
      * Handle the click of a Card
      * @param index
      * @returns 
@@ -145,7 +131,7 @@ function Gameboard({
 
     return (
         <div className='gameboard'>
-            <div className={`playgrid ${checkState(gameState, ['idle', 'starting', 'level-advancing', 'game-over']) ? 'inactive' : ''}`}>
+            <div className='playgrid'>
                 {board.map((row: Cell[], i: number) =>
                     row.map((el: Cell, j: number) => {
                         switch (el.type) {

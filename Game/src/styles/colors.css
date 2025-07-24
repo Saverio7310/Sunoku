@@ -1,12 +1,13 @@
 body.light {
     --color-text: #213547;
+    --color-text-inverted: #ffffff;
     --color-text-warning: #b5b520;
     --color-text-error: #850f0f;
     --color-text-success: #119e11;
     --color-text-candidates-container: #e0870a;
     --color-text-header-title: #000000;
-    --background-color: #e1e1e1;
     --background-color: #d9d9d9;
+    --background-color-inverted: #242424;
     --background-color-header: #c4c0c0;
     --background-color-playgrid-element-clickable: #bababa;
     --background-color-playgrid-element-clicked: #6ac4c7;
@@ -39,12 +40,14 @@ body.light {
 
 body.dark {
     --color-text: #ffffff;
+    --color-text-inverted: #213547;
     --color-text-warning: #b5b520;
     --color-text-error: #850f0f;
     --color-text-success: #008000;
     --color-text-candidates-container: #d8d81a;
     --color-text-header-title: #000000;
     --background-color: #242424;
+    --background-color-inverted: #d9d9d9;
     --background-color-header: #1a1a1a;
     --background-color-playgrid-element-clickable: #585858;
     --background-color-playgrid-element-clicked: #5f9ea0;

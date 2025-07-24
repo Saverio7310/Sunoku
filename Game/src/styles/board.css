@@ -87,6 +87,37 @@
     background-color: var(--background-color-playgrid-element-purple);
 }
 
+.counter {
+    padding: 0.5rem;
+    height: 50%;
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.key-text {
+    font-size: small;
+    height: 100%;
+    align-content: center;
+}
+
+.value-text {
+    text-align: right;
+    font-size: medium;
+    height: 100%;
+}
+
+.counter-hr {
+    border: none;
+    border-top: 1px solid var(--border-color-playgrid-element);
+}
+
+.playgrid-element-empty {
+    height: 100%;
+    align-content: center;
+}
+
 .candidates-container {
     position: absolute;
     line-height: 1;

@@ -35,7 +35,25 @@ function CounterCell({ row, col, bomb_value, count_value }: CounterCellProps) {
         }
     }
 
-    return (<div className={`playgrid-element ${getCounterCardBackgroundColor(row, col)}`}>{`${bomb_value}, ${count_value}`}</div>);
+    return (
+        <div className={`playgrid-element ${getCounterCardBackgroundColor(row, col)}`}>
+            {row === Board.BOARD_ROWS && col === Board.BOARD_COLS ?
+                <div className='playgrid-element-empty'>X</div>
+                :
+                <>
+                    <div className='counter-bomb-value counter'>
+                        <span className='key-text'>Bombs</span>
+                        <span className='value-text'>{bomb_value}</span>
+                    </div>
+                    <hr className="counter-hr"/>
+                    <div className='counter-count-value counter'>
+                        <span className='key-text'>Sum</span>
+                        <span className='value-text'>{count_value}</span>
+                    </div>
+                </>
+            }
+        </div>
+    );
 }
 
 export default React.memo(CounterCell);

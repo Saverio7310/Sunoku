@@ -21,14 +21,39 @@
     min-width: 200px;
     height: 100%;
     position: absolute;
+    margin: 0 1rem;
+    display: flex;
+    justify-content: space-evenly;
+    align-items: center;
+}
+
+.theme-icon-container {
+    width: 2.5rem;
+    aspect-ratio: 1;
     display: flex;
     justify-content: center;
     align-items: center;
 }
 
+.theme-icon {
+    flex: 1;
+    height: auto;
+    max-width: 80%;
+    padding: 0.2rem;
+    border: 1px solid transparent;
+    border-radius: 50%;
+    transition: border-color 0.4s, max-width 0.4s;
+}
+
+.theme-icon.selected {
+    max-width: 100%;
+    border-color: var(--border-color-tab-container);
+}
+
 .theme-switch {
     width: 50px;
     height: 30px;
+    margin: 0 1rem;
     position: relative;
     display: inline-block;
 }

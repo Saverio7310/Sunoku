@@ -62,9 +62,9 @@ The last one is used to store the current value of the level. I used a combinati
 So the ref is used to handle the level value whilst the state is updated only when it has to be shown.
 
 ### Effects
-3 effects were needed in this project.  
-An effect is used to load the record-high score from the **localStorage**, if any.
-Another effect was used to add an event listener to close the candidates context menu when clicking away from it. This is where the ref to the div element was needed.
+3 [effects](Game/src/App.tsx#L43) were needed in this project.  
+An effect is used to load the record-high score from the **localStorage**, if any.  
+Another effect was used to add an event listener to close the candidates context menu when clicking away from it. This is where the ref to the div element was needed.  
 The last one was used to add the selected theme as a class name to the HTML `<body>` element. Changing the class will make the CSS load the correct set of colors from the [colors.css](Game/src/styles/colors.css) file.
 
 ## Folder Structure

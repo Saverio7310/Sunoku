@@ -90,7 +90,7 @@ function Menu({
                             <p className='game-description'>
                                 • Your goal is to find all 3's and 2's hidden in the grid.
                                 <hr className='game-description-hr'/>
-                                • The last column and the last row shows how many 0's there are in the related column/row and the total sum of the numers contained.
+                                • The last column and last row show how many 0's are present in each corresponding column/row, and what the total value of the numbers is.
                                 <hr className='game-description-hr'/>
                                 • If you find them all, you will win the level and proceed to the next one.
                                 <hr className='game-description-hr'/>

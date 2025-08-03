@@ -50,60 +50,43 @@
     border-color: var(--border-color-tab-container);
 }
 
-.theme-switch {
-    width: 50px;
-    height: 30px;
-    margin: 0 1rem;
-    position: relative;
-    display: inline-block;
+.theme-switch-container {
+    width: 60px;
+    height: 35px;
+    border-radius: 33px;
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+    padding: 0 5px;
 }
 
-.theme-input {
-    opacity: 0;
-    width: 0;
-    height: 0;
-}
-
-.theme-slider {
-    position: absolute;
-    cursor: pointer;
-    background-color: var(--background-color-theme-slider);
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    border-radius: 34px;
-}
-
-.theme-slider::before {
-    position: absolute;
-    content: "";
-    cursor: pointer;
-    background-color: var(--background-color-theme-slider-before);
-    top: 5px;
-    left: 5px;
-    width: 20px;
-    height: 20px;
-    border-radius: 50%;
-    transition: .4s;
-}
-
-.theme-slider:hover {
-    background-color: var(--background-color-theme-slider-hover);
-}
-
-.theme-input:checked+.theme-slider:hover {
-    background-color: var(--background-color-theme-slider-before-hover);
-}
-
-/* .theme-slider:hover::before {
-    background-color: var(--background-color-theme-slider-before-hover);
-} */
-
-.theme-input:checked+.theme-slider {
+.theme-switch-container.dark-theme {
     background-color: var(--background-color-theme-slider-input-checked);
 }
 
-.theme-input:checked+.theme-slider::before {
-    transform: translateX(20px);
+.theme-switch-container.dark-theme:hover {
+    background-color: var(--background-color-theme-slider-before-hover);
+}
+
+.theme-switch-container.light-theme {
+    background-color: var(--background-color-theme-slider);
+}
+
+.theme-switch-container.light-theme:hover {
+    background-color: var(--background-color-theme-slider-hover);;
+}
+
+.theme-toggle-ball {
+    --dim: 22px;
+    background-color: var(--background-color-theme-slider-before);
+    height: var(--dim);
+    aspect-ratio: 1;
+    border-radius: 50%;
+    margin-left: 0px;
+    margin-right: 0px;
+    transition: margin-left 0.4s ease-in-out;
+}
+
+.switch-checked {
+    margin-left: calc(100% - var(--dim));
 }

@@ -8,6 +8,10 @@ import '../styles/Header.css'
 import { MdOutlineDarkMode, MdOutlineLightMode } from 'react-icons/md';
 
 function Header() {
+    /**
+     * checked === true means the theme is 'dark'
+     * checked === false means the theme is 'light'
+     */
     const [checked, setChecked] = useState<boolean>(true);
 
     const { switchTheme } = useContext<ThemeContextType>(ThemeContext);
@@ -26,15 +30,12 @@ function Header() {
                 <div className='theme-icon-container'>
                     <MdOutlineLightMode className={`theme-icon ${checked ? '' : 'selected'}`}/>
                 </div>
-                <label className="theme-switch">
-                    <input 
-                        className='theme-input' 
-                        type="checkbox" 
-                        checked={checked} 
-                        onChange={handleSwithToggle}
-                    />
-                    <span className="theme-slider"></span>
-                </label>
+                <div 
+                    className={`theme-switch-container ${checked ? 'dark-theme' : 'light-theme'}`}
+                    onClick={handleSwithToggle}
+                >
+                    <div className={`theme-toggle-ball ${checked ? 'switch-checked' : ''}`}></div>
+                </div>
                 <div className='theme-icon-container'>
                     <MdOutlineDarkMode className={`theme-icon ${checked ? 'selected' : ''}`}/>
                 </div>

@@ -1,20 +1,15 @@
 .menu {
     flex: 1;
     margin: 0 1rem;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
     border: 2px solid var(--border-color-menu);
     border-radius: 10px;
 }
 
 .playmenu {
-    flex: 1;
-    padding: 1rem;
-    padding: 1rem;
     display: flex;
     flex-direction: column;
-    justify-content: start;
+    height: 100%;
+    padding: 1rem;
 }
 
 .current-score-title {
@@ -27,6 +22,7 @@
 }
 
 .tab-holder {
+    min-height: 0;
     flex: 1;
     display: flex;
     flex-direction: column;
@@ -60,10 +56,10 @@
 
 .tab-content {
     flex: 1;
+    overflow: auto;
 }
 
 .tab-pane {
-    height: 100%;
     display: none;
     border: 1px solid var(--border-color-tab-pane);
     border-top-width: 0px;
@@ -73,7 +69,6 @@
 .tab-pane.active {
     display: flex;
     flex-direction: column;
-    justify-content: center;
 }
 
 .tab-pane>h3 {
@@ -99,14 +94,9 @@
 
 .game-description {
     height: 100%;
-    padding: 1rem;
+    padding: 0.5rem 1rem;
     align-content: center;
     text-align: left;
-}
-
-.game-description-hr {
-    border: 0;
-    margin: 0.5rem 0;
 }
 
 .button-container {

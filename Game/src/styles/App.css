@@ -1,5 +1,6 @@
 #root {
     height: 100%;
+    position: relative;
 }
 
 /* #root {
@@ -31,4 +32,11 @@
     height: calc(100vh - 65px);
     padding: 3rem;
     display: flex;
+    flex-wrap: wrap;
+    gap: 1rem;
+    position: absolute;
+    top: 65px;
+    bottom: 0;
+    right: 0;
+    left: 0;
 }

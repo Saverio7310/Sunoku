@@ -88,24 +88,21 @@
 }
 
 .counter {
-    padding: 0.5rem;
+    padding: 0 0.2rem;
     height: 50%;
     width: 100%;
     display: flex;
     justify-content: space-between;
-    align-items: center;
 }
 
 .key-text {
     font-size: small;
-    height: 100%;
     align-content: center;
 }
 
 .value-text {
-    text-align: right;
+    align-content: center;
     font-size: medium;
-    height: 100%;
 }
 
 .counter-hr {

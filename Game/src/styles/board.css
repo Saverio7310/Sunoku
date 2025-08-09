@@ -171,6 +171,8 @@
 
 .gameboard {
     flex: 2;
+    height: 100%;
+    min-width: 500px;
     margin: 0 1rem;
     display: flex;
     flex-direction: column;

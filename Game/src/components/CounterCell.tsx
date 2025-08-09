@@ -41,12 +41,12 @@ function CounterCell({ row, col, bomb_value, count_value }: CounterCellProps) {
                 <div className='playgrid-element-empty'>X</div>
                 :
                 <>
-                    <div className='counter-bomb-value counter'>
+                    <div className='counter'>
                         <span className='key-text'>Bombs</span>
                         <span className='value-text'>{bomb_value}</span>
                     </div>
                     <hr className="counter-hr"/>
-                    <div className='counter-count-value counter'>
+                    <div className='counter'>
                         <span className='key-text'>Sum</span>
                         <span className='value-text'>{count_value}</span>
                     </div>

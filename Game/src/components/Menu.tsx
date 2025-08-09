@@ -19,18 +19,18 @@ type MenuProps = {
 }
 
 function Menu({
-        setLevelScore,
-        setGameState,
-        setMessage,
-        setLevelInfo,
-        createBoard,
-        gameState,
-        levelTracker,
-        levelScore,
-        gameScore,
-        recordScore,
-        message
-    }: MenuProps) {
+    setLevelScore,
+    setGameState,
+    setMessage,
+    setLevelInfo,
+    createBoard,
+    gameState,
+    levelTracker,
+    levelScore,
+    gameScore,
+    recordScore,
+    message
+}: MenuProps) {
     const [activeTabIndex, setActiveTabIndex] = useState<number>(0);
     const [level, setLevel] = useState<number>(0);
 
@@ -87,17 +87,11 @@ function Menu({
                             <h3 className={message.type}>{message.text}</h3>
                         </div>
                         <div className={`tab-pane ${activeTabIndex === 1 ? 'active' : ''}`}>
-                            <p className='game-description'>
-                                • Your goal is to find all 3's and 2's hidden in the grid.
-                                <hr className='game-description-hr'/>
-                                • The last column and last row show how many 0's are present in each corresponding column/row, and what the total value of the numbers is.
-                                <hr className='game-description-hr'/>
-                                • If you find them all, you will win the level and proceed to the next one.
-                                <hr className='game-description-hr'/>
-                                • You can right-click on any card to add a candidate value.
-                                <hr className='game-description-hr'/>
-                                • Finding any 0 will make you lose the game right away.
-                            </p>
+                            <p className='game-description'>• Your goal is to find all 3's and 2's hidden in the grid.</p>
+                            <p className='game-description'>• The last column and last row show how many 0's are present in each corresponding column/row, and what the total value of the numbers is.</p>
+                            <p className='game-description'>• If you find them all, you will win the level and proceed to the next one.</p>
+                            <p className='game-description'>• You can right-click on any card to add a candidate value.</p>
+                            <p className='game-description'>• Finding any 0 will make you lose the game right away.</p>
                         </div>
                     </div>
                 </div>

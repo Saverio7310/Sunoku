@@ -1,5 +1,6 @@
 .menu {
     flex: 1;
+    min-width: 250px;
     margin: 0 1rem;
     border: 2px solid var(--border-color-menu);
     border-radius: 10px;

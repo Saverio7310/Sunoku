@@ -21,9 +21,8 @@
 }
 
 body {
-    min-width: 320px;
     min-height: 100vh;
-    height: 100vh;
     color: var(--color-text);
     background-color: var(--background-color);
+    display: flex;
 }

@@ -1,12 +1,3 @@
-/* .gameboard {
-    flex: 2;
-    margin: 0 1rem;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-} */
-
 .gameboard.hidden {
     display: none;
 }
@@ -15,41 +6,9 @@
     display: flex;
 }
 
-/* .playgrid {
-    flex: 1;
-    aspect-ratio: 1;
-    min-width: 100%;
-    max-width: 100%;
-    border: 1px solid var(--border-color-playgrid);
-    border-radius: 10px;
-    padding: 1rem;
-    margin: 0 auto;
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: space-between;
-    align-content: space-between;
-    gap: 2%;
-    perspective: 1000px;
-} */
-
 .playgrid.inactive {
     pointer-events: none;
 }
-
-/* .playgrid-element {
-    flex: 1;
-    aspect-ratio: 1;
-    text-align: center;
-    align-content: center;
-    border: 1px solid var(--border-color-playgrid-element);
-    border-radius: 10px;
-    min-width: 13%;
-    max-width: 13%;
-    pointer-events: none;
-    position: relative;
-    transition: transform 1s;
-    transform-style: preserve-3d;
-} */
 
 .playgrid-element.clickable {
     pointer-events: auto;
@@ -162,68 +121,48 @@
     align-content: end;
 }
 
-/* .gameboard {
-    border: 2px solid green;
-    flex: 2;
-    padding: 10px;
-    display: flex;
-} */
-
 .gameboard {
+    container-type: size;
     flex: 2;
-    height: 100%;
-    min-width: 500px;
+    min-width: 55vw;
+    min-height: 500px;
+    max-width: 80vw;
     margin: 0 1rem;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
+    display: grid;
+    grid-template-columns: 100%;
+    grid-template-rows: 100%;
+    place-items: center;
     border: 2px solid var(--border-color-gameboard);
     border-radius: 10px;
 }
 
-/* .playgrid {
-    margin: 0 auto;
-    padding: 1rem;
-    perspective: 1000px;
-    aspect-ratio: 1;
-    border: 2px solid black;
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: space-between;
-    align-content: space-between;
-    gap: 2%;
-} */
-
 .playgrid {
-    max-height: 100%;
+    width: 100%;
     margin: auto;
     padding: 1rem;
     perspective: 1000px;
     aspect-ratio: 1;
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: space-between;
-    align-content: space-between;
-    gap: 2%;
+    display: grid;
+    grid-template-columns: repeat(6, 1fr);
+    grid-template-rows: repeat(6, 1fr);
+    gap: 10px;
 }
 
-/* .playgrid-element {
-    aspect-ratio: 1;
-    width: calc(100% / 6 - (5 * 2% / 6));
-    border: 2px solid red;
-} */
-
 .playgrid-element {
-    flex: 1;
-    aspect-ratio: 1;
+    min-width: 0;
+    min-height: 0;
     align-content: center;
     border: 1px solid var(--border-color-playgrid-element);
     border-radius: 10px;
-    min-width: 13%;
-    max-width: 13%;
     pointer-events: none;
     position: relative;
     transition: transform 1s;
     transform-style: preserve-3d;
+}
+
+@container (min-aspect-ratio: 1) {
+    .playgrid {
+        height: 100%;
+        width: auto;
+    }
 }

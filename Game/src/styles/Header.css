@@ -91,3 +91,23 @@
 .switch-checked {
     margin-left: calc(100% - var(--dim));
 }
+
+@media (max-width: 600px) {
+    .theme-toggle {
+        min-width: min-content;
+        padding: 0 10px;
+    }
+
+    .theme-icon-container {
+        display: none;
+    }
+
+    .theme-switch-container {
+        width: 50px;
+        height: 30px;
+    }
+
+    .theme-toggle-ball {
+        --dim: 18px;
+    }
+}

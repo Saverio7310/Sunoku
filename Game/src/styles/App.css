@@ -12,3 +12,9 @@
     justify-content: center;
     gap: 1rem;
 }
+
+@media (max-width: 600px) {
+    .homepage {
+        padding: 1rem;
+    }
+}
